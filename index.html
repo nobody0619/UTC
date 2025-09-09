@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Public Mutual Consultant Exam Training</title>
+  <title>Pulbic Mutual Consultant Exam Training</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <style>
     body { font-family: Arial, sans-serif; max-width:700px; margin:auto; text-align:center; }
@@ -44,4 +44,244 @@
     <div id="question-area"></div>
   </div>
 
-  <!-- 4. Section finished & submit resu
+  <!-- 4. Section finished & submit result -->
+  <div id="finish">
+    <h3 id="finish-msg"></h3>
+    <p id="stats"></p>
+    <div id="controls"></div>
+  </div>
+
+  <iframe name="postFrame" style="display:none;"></iframe>
+  <form id="postForm"
+        action="https://script.google.com/macros/s/AKfycbyek_JoRdNny8wiHO_nOyiNJV2Gt2qoVjiJ3rhFZu0BkbWYflpVXYiE-_Gl7xHQROM/exec"
+        method="post" target="postFrame" style="display:none;">
+    <input name="quizId"/><input name="name"/><input name="score"/>
+    <input name="correct"/><input name="wrong"/><input name="time"/>
+  </form>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  let user = '', chapters = [], grouped = {};
+  let chapterKey, sectionKey, labelKey, sheetKey;
+  let currentChapter = '', sectionList = [], secIndex = 0;
+  let qs = [], queue = [], score = 0, correct = 0, wrong = 0;
+  let chapterStart = 0;
+  const MAX_OPTS = 15;
+
+  // 1) Bind Start
+  document.getElementById('startBtn').onclick = () => {
+    const nm = document.getElementById('username').value.trim();
+    if (!nm) return alert('Please enter your name');
+    user = nm;
+    document.getElementById('welcome').style.display = 'none';
+    loadChapters();
+  };
+
+  // 2) Load chapters
+  function loadChapters() {
+    Papa.parse('Chapters.csv',{download:true,header:true,skipEmptyLines:true,
+      complete(res) {
+        chapters = res.data.map(raw => {
+          const r = {};
+          Object.entries(raw).forEach(([k,v])=>{
+            r[k.trim()] = typeof v==='string'? v.trim(): v;
+          });
+          return r;
+        });
+        if (!chapters.length) return alert('Check Chapters.csv file');
+        const keys = Object.keys(chapters[0]);
+        chapterKey = keys.find(k=>k.toLowerCase()==='chapter');
+        sectionKey = keys.find(k=>k.toLowerCase()==='section');
+        labelKey   = keys.find(k=>k.toLowerCase()==='label');
+        sheetKey   = keys.find(k=>k.toLowerCase()==='sheet');
+        if (!chapterKey||!sectionKey||!labelKey||!sheetKey)
+          return alert('Chapters.csv requires: chapter, section, label, sheet');
+
+        grouped = {};
+        chapters.forEach(r=>{
+          const c = r[chapterKey];
+          (grouped[c]||(grouped[c]=[])).push(r);
+        });
+        const menu = document.getElementById('menu');
+        menu.innerHTML = '<h2>Select Chapter</h2>';
+        menu.style.display = 'block';
+        Object.keys(grouped).forEach(chap => {
+          const btn = document.createElement('button');
+          btn.textContent = chap;
+          btn.onclick = () => startChapter(chap);
+          menu.appendChild(btn);
+        });
+      }
+    });
+  }
+
+  // 3) Start chapter
+  function startChapter(chap) {
+    currentChapter = chap;
+    sectionList = grouped[chap].sort((a,b)=>
+      a[sectionKey].localeCompare(b[sectionKey])
+    );
+    secIndex = 0;
+    document.getElementById('menu').style.display = 'none';
+    loadSection();
+  }
+
+  // 4) Load section
+  function loadSection() {
+    const sec = sectionList[secIndex];
+    document.getElementById('quiz-title').textContent =
+      `${currentChapter} – ${sec[sectionKey]}: ${sec[labelKey]}`;
+    score = correct = wrong = 0;
+    chapterStart = Date.now();
+    Papa.parse(sec[sheetKey],{download:true,header:true,skipEmptyLines:true,
+      complete(r) {
+        qs = r.data.map(q=>({...q,attempt:0}));
+        queue = shuffle([...qs]);
+        document.getElementById('quiz').style.display='block';
+        document.getElementById('finish').style.display='none';
+        updateUI(0);
+        nextQ();
+      }
+    });
+  }
+
+  // Update UI
+  function updateUI(delta) {
+    document.getElementById('score').textContent =
+      `Score: ${score} (${delta>0?'+':''}${delta})`;
+    document.getElementById('remaining').textContent =
+      `Remaining Questions: ${queue.length}`;
+    const pg = document.getElementById('progress');
+    pg.max = qs.length; pg.value = qs.length - queue.length;
+  }
+
+  // 5) Render question
+  function nextQ() {
+    const qa = document.getElementById('question-area');
+    qa.innerHTML = ''; updateUI(0);
+    if (queue.length===0) return finishSection();
+
+    const q = queue.shift();
+    const div = document.createElement('div');
+    div.className = 'question';
+    const safeQ = q.question.replace(/\r?\n/g,'<br/>');
+    div.innerHTML = `<p><strong>${safeQ}</strong></p>`;
+
+    if (q.image) {
+      const src = q.image.replace(/\s*\//g,'/').trim();
+      const img = document.createElement('img');
+      img.src = src;
+      div.appendChild(img);
+    }
+
+    const opts = document.createElement('div');
+    opts.className = 'options';
+    if (q.type==='text') {
+      opts.innerHTML = '<input type="text" id="txtAns" placeholder="Type your answer…"/>';
+    } else {
+      const letters = Array.from({length:MAX_OPTS},(_,i)=>String.fromCharCode(65+i));
+      shuffle(letters.filter(l=>q[l])).forEach(l=>{
+        const inp = document.createElement('input');
+        inp.type = q.type==='checkbox'?'checkbox':'radio';
+        inp.name = 'opt'; inp.value = l; inp.id = 'opt_'+l;
+        const lbl = document.createElement('label');
+        lbl.className = 'option-label'; lbl.htmlFor = 'opt_'+l;
+        lbl.appendChild(inp);
+        let raw = q[l];
+        if (/^-?\d+\.0$/.test(raw)) raw = String(parseInt(raw));
+        lbl.append(' '+raw);
+        opts.appendChild(lbl);
+      });
+    }
+    div.appendChild(opts);
+
+    const fb = document.createElement('div');
+    fb.className = 'feedback'; div.appendChild(fb);
+
+    const sb = document.createElement('button');
+    sb.textContent = 'Submit';
+    sb.onclick = () => {
+      let ua = [];
+      if (q.type==='text') {
+        ua = document.getElementById('txtAns').value.split(',').map(s=>s.trim()).filter(s=>s);
+      } else {
+        ua = Array.from(div.querySelectorAll('input[name="opt"]:checked')).map(i=>i.value);
+      }
+      if (!ua.length) return alert('Please select or enter an answer');
+
+      let isC=false;
+      if (q.type==='text') {
+        const lows = ua.map(s=>s.toLowerCase());
+        const ansList = q.answer.split(',').map(s=>s.toLowerCase());
+        isC = lows.some(v=>ansList.includes(v));
+      } else {
+        const uaA = ua.map(s=>s.toUpperCase()).sort().join(',');
+        const caA = q.answer.split(',').map(s=>s.trim().toUpperCase()).sort().join(',');
+        isC = uaA===caA;
+      }
+      const delta = isC ? (q.attempt?1:2) : (q.attempt?-2:-1);
+      score+=delta; if(isC) correct++; else wrong++;
+      let ansTxt='';
+      if (delta<0) {
+        ansTxt = q.answer.split(',').map(letter=>q[letter]||letter).join(' / ');
+      }
+      fb.textContent = isC?`Correct! +${delta}`:`Wrong! ${delta}  Answer: ${ansTxt}`;
+      updateUI(delta);
+      sb.disabled = true;
+      const nb = document.createElement('button');
+      nb.textContent = 'Next Question'; nb.onclick = nextQ;
+      div.appendChild(nb);
+      if (!isC) {
+        q.attempt++;
+        for (let i=0; i<2; i++) {
+          queue.splice(Math.floor(Math.random()*(queue.length+1)),0,{...q});
+        }
+      }
+    };
+    div.appendChild(sb);
+    qa.appendChild(div);
+  }
+
+  // 6) Section finished
+  function finishSection() {
+    document.getElementById('quiz').style.display='none';
+    document.getElementById('finish').style.display='block';
+    document.getElementById('finish-msg').textContent =
+      `Well done, ${user}! You have completed this chapter.`;
+    document.getElementById('stats').textContent =
+      `Score: ${score}, Correct: ${correct}, Wrong: ${wrong}`;
+    const form = document.getElementById('postForm');
+    form.quizId.value  = currentChapter + '_' + sectionList[secIndex][sectionKey];
+    form.name.value    = user;
+    form.score.value   = score;
+    form.correct.value = correct;
+    form.wrong.value   = wrong;
+    form.time.value    = Math.floor((Date.now()-chapterStart)/1000);
+    form.submit();
+
+    const ctrl = document.getElementById('controls');
+    ctrl.innerHTML = '';
+    const btn = document.createElement('button');
+    btn.textContent = secIndex < sectionList.length-1 ? 'Next Section' : 'Back to Chapters';
+    btn.onclick = () => {
+      document.getElementById('finish').style.display = 'none';
+      if (secIndex < sectionList.length-1) {
+        secIndex++; loadSection();
+      } else {
+        document.getElementById('menu').style.display = 'block';
+      }
+    };
+    ctrl.appendChild(btn);
+  }
+
+  function shuffle(arr) {
+    for (let i = arr.length-1; i > 0; i--) {
+      const j = Math.floor(Math.random()*(i+1));
+      [arr[i],arr[j]]=[arr[j],arr[i]];
+    }
+    return arr;
+  }
+});
+</script>
+</body>
+</html>
