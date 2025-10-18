@@ -1,0 +1,45 @@
+title,type,question,A,B,C,D,answer,image,explain
+,radio,"Q22. Vincent received RM 500 cash as his birthday gift. If he puts the money in his kid's savings account that offers him 5% average yearly return, how long would it take to double the value of his money in the investment?",14.4 years,20 years,18 years,25 years,C,,"Apply: Rule of 72
+Years to double up = 72 / 5 = 14.4 years"
+,radio,"Q23. An investor holding 5,000 units before 1:2 unit split issue with the investment value of RM15,000. After the unit split issue, the investor will","Hold 7,500 units with investment value at RM 15,000","Hold 5,000 units with investment value at RM 15,000","Hold 7,500 units with investment value at RM 22,5000","Hold 2,500 units with investment value at RM 15,000",B,,"With 1:2 unit split, meaning that for every 2 units holding by the investor, will get additional 1 unit.
+For 5,000 units, will get additional 2,500 units, total after unit split is 7,500 units.
+As the unit price will be adjusted accordingly, the investment value is remain unchanged at RM 15,000"
+,radio,Q24. What is Cooling-Off Period?,The period of time when no selling or buying of unit trust can be transacted,The period of time which stock market is Cooling-Off after a strong rally,The period of time where an investor has the right to sell the unit trust back to the UTMC at no penalty to the investor,UTMC has the rights to repurchase all unit trust from unit trust holder at no penalty to UTMC,B,,"For first time investors, they are entitled for cooling-off right, where the investors can exercise the right to reconsider the unit trust investment, within stipulated time (cooling-off period) to get a full refund."
+,radio,"Q25. Choose the Correct Statement(s)
+I. Spread of Risk - A large pool of fund enables the Fund Manager to purchase a wider range of investment.
+II. Liquidity - Unit Holder can redeem the units whenever they prefer
+III. Professional Management - Unit Holder can contribute ideas, knowledge and experience to the Fund Manager and that can help the manager to generate more return
+IV. Ease of Purchase - Unit Holder can Purchase and liquidate their investment with the UTMC","I, II, III","I, II, III, IV","I, III, IV","I, II, IV",B,,Professional Management: The fund managers making investment decisions on behalf of investors in UTS are professionals. Their training and background should ensure that the investment process adopted by UTS is structured and follows basic investment principles.
+,radio,Q26. Which of the following statements are TRUE regarding the EPF Members Investment Scheme?,The maximum age for the qualified members is 60,Members can withdraw EPF savings for fund investment once in every two months,Investment can be made with any unit trust scheme,Balance in Account 2 is not eligible for this scheme,A,,"The maximum age for the qualified members is 55;
+Members can withdraw EPF savings for fund investments based on available balance in Account 1 on quarterly basis;
+Investment can be made with selected unit trust scheme only;
+Balance in Account 2 is not eligible for this scheme (only can use Account 1 to invest)"
+,radio,"Q29. Generally, what are the possible forms of return on investment can an investor expect from investing in unit trusts?
+I. Distribution
+II. Capital appreciation
+III. Interest",I & II,I & III,II & III,All of the optional answers are correct,A,,Return of a unit trust scheme investment: distribution & capital appreciation
+,radio,"Q30. Rank the following funds according to their level of risks from highest to lowest.
+I. Equity Growth Fund
+II. Money Market Fund
+III. Balanced Fund
+IV. Hedge Fund","I, III, II, IV","IV, I, III, II","II, III, I, IV","II, I, III, IV",A,,"Highest risk to lowest risk:
+Hedge Fund --> Equity Growth Fund --> Balanced Fund --> Money Market Fund"
+,radio,"Q31. In marketing unit trust scheme, providing quality services includes","Being responsive to customers’ requests, queries and complaints",Providing clear and precise information,Providing convenient choices in handling investors’ payment methods,All of the optional answers are correct,B,,"In marketing unit trust scheme, as a UTC, you should provide quality services including:
+Being responsive to customers’ requests, queries and complaints;
+Providing clear and precise information;
+Providing convenient choices in handling investors’ payment methods"
+,radio,"Q32. An investor had invested a single amount of money in a unit trust fund at RM0.50 per unit in the first year and subsequently purchased another 10,000 units at RM0.52 per unit in second year. At the end of third year, he decided to redeem all of his investment at the price of RM0.60 per unit and the total proceeds was RM15,000. Question: How many units was he entitled for the investment he made in the first year?","15,000 units","25,000 units","35,000 units",None of the optional answer is correct,C,,"Third Year: Redeem all of his investment, with the price of RM0.60 per unit, total proceed is RM15,000
+No of units = Total Proceed / Price
+No of units = RM15,000 / RM0.60
+No of units = 25,000 units
+
+Second Year: Purchased 10,000 units
+
+First Year: Total Units - Second Year's units = 25,000 units - 10,000 units = 15,000 units"
+,radio,"Q33. An investor had invested a single amount of money in a unit trust fund at RM0.50 per unit in the first year and subsequently purchased another 10,000 units at RM0.52 per unit in second year. At the end of third year, he decided to redeem all of his investment at the price of RM0.60 per unit and the total proceeds was RM15,000. Question: What is the total amount of money he had invested in the first and second year?","RM7,500 ","RM5,200 ","RM12,700 ",None of the optional answer is correct,B,,"From the previous question, the answer for the first year investment = 15,000 units
+
+First year's investment value = no of units x price = 15,000 units x RM0.50 = RM7,500
+
+Second year's investment value = no of units x price = 10,000 units x RM0.52 = RM5,200
+
+Total = RM7,500 + RM5,200 = RM12,700"

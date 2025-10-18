@@ -1,0 +1,65 @@
+title,type,question,A,B,C,D,answer,image,explain
+Practice Questions 2,radio,"Q1. An investor wants to gain exposure to the commercial property market in Kuala Lumpur but with only a small amount of money (approximately RM5,000), she was not able to invest at all. Which is a good investment alternative for her?",Invest in equity index fund,Invest in fixed income fund,Invest in any open-end funds,Invest in real estate property trusts (or Real Estate Investment Trusts),D,,"Alternative to property market investment is to invest in real estate property trusts (or Real Estate Investment Trusts), one of the ways to tap into property investment."
+,radio,"Q2. Puan Rose decided to withdraw some of her savings to invest in unit trusts. She would like to invest all of her money in a fund at one time and let it grow irrespective of the market condition. Whereas for Puan Sarina, she has very little savings but she is willing to cut some of her expenses every month and invests in unit trusts. Name the respective ways that can be used by them to invest in unit trusts.",Spot and Installment Plans,Lump Sum Investment and Regular Savings Plan,Lump Sum Investment and Contractual Plans,Fixed Investment and Installment Plans,A,,"Puan Rose: Lump Sum investment
+Puan Sarina: Regular Savings Plan"
+,radio,"Q3. Given data:
+I. No. of units held before unit split: 18,000 units
+II. Total value of the investment before unit split: RM6,000
+III. Unit split ratio: 1 for 3 Question: How many units will the investor hold after the unit-split exercise?","24,000 units","18,000 units","15,000 units","6,000 units",B,,"Unit Split ratio: 1 for 3
+meaning: for every 3 units, will get additional 1 unit.
+Currently holding 18,000 units,
+will get additional of = 18,000 x 1/3 = 6,000 units
+Total = 18,000 units + 6,000 units = 24,000 units"
+,radio,"Q4. Given data:
+I. No. of units held before unit split: 18,000 units
+II. Total value of the investment before unit split: RM6,000
+III. Unit split ratio: 1 for 3 Question: What is her total investment value after the unit-split exercise?","RM2,000 ","RM6,000 ","RM8,000 ",None of the optional answer is correct,A,,"Total Investment Value is the same before and after the unit split,
+as the NAV/U (fund price) will be adjusted lower, compensated with additional units.
+
+NAV/U before unit split = NAV / no of units = RM6,000 / 18,000 units = RM0.3333
+
+NAV/U after unit split = RM0.3333 x 3/4 = RM0.25
+
+Investment Value after unit split = No of units after unit split x adjusted fund price = 24,000 units x RM0.25 = RM6,000"
+,radio,"Q5. One of your friends tells you, “By the time I retire in Year 2050, I believe the Kuala Lumpur Composite Index (KLCI) will be many times what it is today. I’m happy with that. Give me a fund that can best deliver the same result. What would you recommend to him?",Buy a Growth Fund because it can give him a return better that the KLCI by Year 2050,Buy a Balanced Fund because its investment returns are less volatile than the KLCI,Buy an Index Tracking Fund using KLCI as the benchmark,"For such a long investment horizon, don’t worry: buy any fund",B,,"The investor is looking for a fund that can deliver the SAME RESULT AS KLCI Performance, which is an Index Tracking Fund using KLCI as the benchmark."
+,radio,"Q6. Net Asset Value cum-distribution for a unit trust is RM200 million. Unit in circulation is 380 million units and the fund manager is charging a 5% initial service charge. (Please use 3 decimal places for calculating purpose) Question: If the distribution declared is 3.5 sen per unit, how much is the fund price ex-distribution? (Round the answer to the nearest sen)",RM0.49 ,RM0.52 ,RM1.86 ,RM1.96 ,B,,"Step 1: NAV/U cum distribution
+NAV/U cum distribution = NAV / No of units = RM200 million / 380 million = RM0.526
+
+Step 2: NAV/U ex-distribution
+NAV/U ex-distribution = NAV/U cum distribution [minus] distribution
+= RM0.526 - RM0.035 = RM0.491
+
+Nearest answer is RM0.49"
+,radio,"Q7. Net Asset Value cum-distribution for a unit trust is RM200 million. Unit in circulation is 380 million units and the fund manager is charging a 5% initial service charge. (Please use 3 decimal places for calculating purpose) Question: Based on the above answer (NAV/U ex-distribution) and assume that a client invested RM10,000 ex-distribution, how many units will she get for her investment?","20,408.16 units","19,436.34 units","5,120.33 units","5,102.04 units",B,,"Step 1: Working Money (as there is 5% sales charge)
+Working Money = Capital / (1 + sales charge)
+= RM10,000 / (1 + 0.05)
+= RM10,000 / 1.05
+= RM9,523.81
+
+Step 2: No of units
+No of units = Working Money / fund price ex-distribution
+= RM9,523.81 / RM0.49
+= 19,436.34 units"
+,radio,"Q8. Net Asset Value cum-distribution for a unit trust is RM200 million. Unit in circulation is 380 million units and the fund manager is charging a 5% initial service charge. (Please use 3 decimal places for calculating purpose) Question: If the initial service charges is reduced from 5% to 3% and based on the selling price ex-distribution, how much savings can the client get?",RM326.53 ,RM184.93 ,RM327.95 ,RM200.00 ,B,,"Investment Capital = RM10,000
+
+Service Charge 5%
+Working Money = Capital / (1 + Service Charge)
+= RM10,000 / (1 + 0.05)
+= RM10,000 / 1.05
+= RM9,523.81
+
+Service Charge 3%
+Working Money = Capital / (1 + Service Charge)
+= RM10,000 / (1 + 0.03)
+= RM10,000 / 1.03
+= RM9,708.74
+
+SAVINGS = Differences between 5% and 3% of Service Charge
+= RM9,708.74 - RM9,523.81
+= RM184.93"
+,radio,"Q9. In the annual report of ABC Millennium Fund, the expenses incurred by the fund during the financial year were: Annual management fee: RM 3,528,673 Trustee fee: RM 150,326 Auditors’ remuneration: RM 16,300 Administrative expenses: RM 28,418 The average net asset value for the period was RM235,300,528. Question: Calculate the Management Expense Ratio (MER) of the fund for the financial year.",1.50%,1.58%,0.07%,0.01%,A,,"Formula for MER = All Expenses / Average Fund Size (Average Net Asset Value) x 100%
+
+MER = (Annual Management Fee + Trustee Fee + Auditors' remuneration + Administrative Expenses) / Average Net Asset Value x 100%
+MER = (RM3,528,673 + RM150,326 + RM16,300 + RM28,418) / RM235,300,528 x 100%
+= 1.58%"
+,radio,Q10. A decrease in the MER indicates,The annual management fee must be revised downward,The Unit Trust Management Company (UTMC) must be overpaid for the administrative expenses,The UTMC is not managing the total fees and expenses well,The UTMC is managing the total fees and expenses well,C,,"A gradually decreasing MER over a period of several years indicates that a UTMC may be managing its operating costs efficiently for its fund size. UTC should note that UTS with a larger fund size should generally have a lower MER than smaller UTS, as there may be some economies of scale that can be shared with unitholders. However, this need not necessarily be so."

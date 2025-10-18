@@ -1,0 +1,52 @@
+title,type,question,A,B,C,D,answer,image,explain
+,radio,Q46. Lisa is a Private Retirement Scheme (PRS) Consultant with PRS Provider Delta. In which of these scenarios would the registration of Lisa as a PRS Consultant lapse? (i) PRS Provider Deltas registration as a PRS Provider is suspended (ii) A PRS member sues Lisa because her portfolio is down 30% this year (iii) PRS Provider Delta ceases operations pending bankruptcy proceedings (iv) PRS Provider Delta acquires PRS Provider Echo and continues business as a PRS Provider,"(i), (iii) and (iv) only",(iii) and (iv) only,(ii) and (iv) only,(i) and (iii) only,D,,"Registration of PRS consultant will lapse under 3 situation;
+i. PRS Provider registration is revoked
+ii. PRS Provider registration is suspended
+iii. PRS Provider ceases operations"
+,radio,Q47. What are some of the advantages of using the compounded annual return (CAR) method over the average total return method in comparing investment returns? (i) CAR provides a risk return matrix for investment returns (ii) CAR standardizes the investment returns into one comparable output (iii) CAR can be used to compare returns over different investment periods (iv) CAR assumes that the returns are compounded at the same rate for each period,"(i), (ii) and (iii) only",(i) and (iv) only,"(ii), (iii) and (iv) only",(ii) and (iii) only,C,,"The advantages of using the compounded annual return (CAR) method over the average total return method in comparing investment returns is
+
+(ii) CAR standardizes the investment returns into one comparable output
+
+(iii) CAR can be used to compare returns over different investment periods"
+,radio,Q48. Use the information below to answer the question: Question: Calculate the ATR for Fund A and Fund B respectively.,ATR (Fund A) = 0% ATR (Fund B) = 10%,ATR (Fund A) = -2.5% ATR (Fund B) = 10%,ATR (Fund A) = -2.5% ATR (Fund B) = 5%,ATR (Fund A) = 0% ATR (Fund B) = 5%,A,,"Total Return= Capital Appreciation + Income Distribution
+
+ATR= (Ending NAV-Beginning NAV) + Distribution/ Beginning NAV
+
+Fund A:
+
+ATR= (RM 1.95-RM 2.00) + RM 0.05/ RM 2.00
+= 0%
+
+Fund B:
+
+ATR= (RM 2.10-RM 2.00) + RM 0.10/ RM 2.00
+= 10%"
+,radio,Q49. A Private Retirement Scheme (PRS) Consultant must know their funds well as they need to: (i) explain the risks of funds to the clients (ii) match the funds to the PRS members investment needs (iii) ascertain the type of investors their clients are (iv) explain the characteristics of the PRS to the clients,"A. (i), (ii) and (iv) only",B. (iii) and (iv) only,"C. (i), (ii) and (iii) only",D. (i) and (iv) only,A,,"PRS Consultant must know their funds well as they need to:
+
+(i) explain the risks of funds to the clients
+
+(ii) match the funds to the PRS members investment needs
+
+(iv) explain the characteristics of the PRS to the clients"
+,radio,Q50. Which of the following statements are CORRECT with respect to the charges for dealing in units? (i) It must be expressed as a fixed amount or fixed percentage (ii) It must be specifically disclosed in the Disclosure Document (iii) It is the charge Private Retirement Scheme (PRS) members pay for participating in the PRS (iv) It can be changed through the passing of a resolution at a PRS members' meeting,All of the optional answers are correct,(i) and (iii) only,"(ii), (iii) and (iv) only","(i), (ii) and (iv) only",A,,"In regards to the charges for dealing in units;
+
+(i) It must be expressed as a fixed amount or fixed percentage
+
+(ii) It must be specifically disclosed in the Disclosure Document
+
+(iii) It is the charge Private Retirement Scheme (PRS) members pay for participating in the PRS
+
+(iv) It can be changed through the passing of a resolution at a PRS members' meeting"
+,radio,Q51. Which of the following statements are CORRECT with respect to the Private Retirement Scheme (PRS)? (i) It must offer core funds (ii) A PRS Provider needs to be licensed (iii) It does not allow any withdrawals until retirement age (iv) It has default options for people who do not select funds,"(i), (ii) and (iv) only",(i) and (iii) only,"(ii), (iii) and (iv) only",(ii) and (iv) only,A,,"In regards to the Private Retirement Scheme (PRS);
+
+(i) It must offer core funds
+
+(ii) A PRS Provider needs to be licensed
+
+(iv) It has default options for people who do not select funds"
+,radio,Q52. Use the information below to answer the question: Today is 1 January 2X13. Fund Y and Fund Z are part of PRS Provider Zeta's offering of funds. Question: How does the income distribution for 2X12 impact the calculations for Average Total Return (ATR) for 2X12 and for the Compounded Annual Return (CAR) for the past 5 years for Fund Y?,Increases the ATR for 2X12 and increases the CAR,No impact on the ATR for 2X12 but increases the CAR,Increases the ATR for 2X12 but no impact on the CAR,No impact on both,A,,The calculation of Average Total Return (ATR) include capital appreciation and income distribution. As such there is no impact on both ATR and CAR.
+,radio,Q53. Which of the following can only be remunerated by way of an annual fee from the Private Retirement Scheme (PRS)? (i) PRS Provider (ii) PRS Distributor (iii) Scheme Trustee (iv) PRS Consultant,(i) and (iii) only,"(i), (iii) and (iv) only",(ii) and (iv) only,(i). (ii) and (iii),D,,PRS Provider can be remunerated by way of an annual management fee and Scheme Trustee can be remunerated by annual trustee fee charged to the fund.
+,radio,Q54. Rank the following funds from the most volatile in returns to the least volatile: (i) Money Market Fund (ii) Conservative Fund (iii) Moderate Fund (iv) Growth Fund,"(iv), (iii), (ii) and (i)","(iv), (iii), (i) and (ii)","(iii), (iv), (i) and (ii)","(i), (ii). (iii) and (iv)",A,,"Most volatile to least volatile in returns:
+
+Growth Fund> Moderate Fund> Conservative Fund> Money Market Fund"
+,radio,"Q57. Employer ABC contributes to a Private Retirement Scheme (PRS) on behalf of an employee, Ghani, subject to a vesting schedule. Ghani, who is 38 years old, does not contribute to the PRS on his own. As of 1 January 20X2, the vested amount is RM5,000 for both accounts. The penalty imposed on members for early withdrawal from sub-account B is 8%. Assume that there are no other charges imposed by the PRS Provider. What is the accrued benefit due to Ghani as of 1 January 20X2?","RM4,700 ","RM1,500 ","RM5,000 ","RM3,500 ",C,,"Accrued benefit is the amounts accumulated in both sub-account A and sub-account B which in this case is RM 5,000"

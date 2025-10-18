@@ -1,0 +1,64 @@
+title,type,question,A,B,C,D,answer,image,explain
+,radio,"Q31. The followings are the roles of UTC, except",Inform the investors about the structure of UTS and what are their rights as unitholders,To be responsible to the customer’s request with honesty and dignity,Force selling to customers in order to get benefits from their investment,Fine tune their product knowledge,C,,"As a UTC, force selling is not an ethical way to market the UTS."
+,radio,Q32. A complaint can be referred to,UTC,UTMC,FIMM & SC,All of the above,D,,"A compliant can be referred to UTC, UTMC, FIMM and/or SC."
+,radio,Q33. There are many potential risks that are related to investing in UTS. Listed below are a few types of risk. Which of the following has an incorrect description?,Market risk – stock value does not fluctuate in response to the activities of individual companies and general market or economic conditions,Liquidity risk – defined as the ease with which a security can be sold at or near its fair value depending on the market,Inflation risk – the risk of high inflation will affect the real return from investment,Risk of non-compliance-risk that specifically occurs when a Syariah compliant security is reclassified as a Syariah non-compliant Securities,D,,Market risk – stock value DOES fluctuate in response to the activities of individual companies and general market or economic conditions.
+,radio,"Q34. In a haste to close sales, you may inadvertently say the wrong things. Which of the following is (are) not the right position(s) to use?",“It is safe to invest now. The market is going up and you will definitely make profits.”,“No money is not a problem because you can apply for a loan.”,“You’ll get free insurance or gifts and I can add on some additional units for you.”,All of the optional answers are not the right propositions.,B,,"The returns of the unit trust scheme is depending on the performance of the markets/asset classes invested into;
+In addition, UTCs should not encourage investors to borrow loan for investments;
+Any form of rebate/gift to investors is prohibited."
+,radio,Q35. Hasnah invested all the money that she collected from her parents and relatives during Hari Raya in fund A and fund B on 13 January 200X. The unit prices at the close of business on the day and other information related to her investment are as follows (refers to attached info). Question: Calculate the total number of units received by Hasnah for her investments made in Fund A (W) and Fund B (X) respectively.,"W=3,527.33 units; X=1,205.55 units","W=3,703.70 units; X=1,265.82 units","W=3,407.41 units; X=1,145.27 units",None of the optional answer is correct,B,,"Fund A (represents as W):
+Investment Amount (or Capital) = RM1,000
+Initial Sales Charge = 5%
+
+Step 1: What is the net investment amount?
+Working Money = Capital / ( 1 + Service Charge)
+= RM1,000 / ( 1 + 0.05)
+= RM1,000 / 1.05
+= RM952.38
+
+Step 2: No of Units
+No of units = Working Money / unit price
+= RM952.38 / RM0.27
+= 3,527.33 units
+
+Fund B (represents as X)
+Investment Amount (or Capital) = RM1,000
+Initial Sales Charge = 0%
+
+Step 1: What is the net investment amount?
+As the initial sales charge is 0, the net investment amount is RM1,000.
+
+Step 2: No of Units
+No of units = Working Money / unit price
+= RM1,000 / RM0.8295
+= 1,205.55 units"
+,radio,"Q36. An existing investor Mary decided to sell all her 5,000 units in Fund B on the same day, how much would she receive from her redemption?","RM4,064.55 ","RM4,147.50 ","RM1,350.00 ","RM1,417.50 ",B,,"SELL: 5,000 units of Fund B
+Exit Fee: 2%
+
+Proceeds from the disposal before exit fee = UNITS x PRICE
+= 5,000 units x RM0.8295
+= RM4,147.50
+
+Cost of exit fee 2%
+RM4,147.50 x 2% = RM82.95
+
+Net Proceeds after deducting exit fee
+= RM4,147.50 - RM82.95
+= RM4,064.55"
+,radio,Q37. The unit trust funds that are available in the market could be designed to meet the following investor requirement(s):,Long-term savings,Children’s education,Retirement fund,All of the optional answers are correct,C,,"The purposes of unit trust investments: long-term savings, children's education, retirement fund, etc."
+,radio,"Q38. Cik Zarina and Encik Hamzah took part in a millionaire contest and won RM64,000 cash respectively. Both of them decided to invest their cash prizes at the same time as follows (refers to attached info). Question: Suppose that investment A provides an average annual return of 8.5% and value of Encik Hamzah investment doubled approximately 1.27 years earlier than those of Cik Zarina, what is the average annual return of investment B?",Approximately 7.39%,Approximately 9.77%,Approximately 10.00%,None of the optional answer is correct,B,,"Investment A: average annual return = 8.5% (by Zarina)
+Years of double up: Apply Rule of 72
+= 72 / 8.5
+= 8.47 years
+
+Hamzah = investment value double up approximately 1.27 years earlier than Zarina
+Hamzah = 8.47 years (Zarina) - 1.27 years
+= 7.2 years to double up
+
+Average annual return of Investment B = Apply Rule of 72
+= 72 / 7.2
+= 10%"
+,radio,"Q39. Cik Zarina and Encik Hamzah took part in a millionaire contest and won RM64,000 cash respectively. Both of them decided to invest their cash prizes at the same time as follows (refers to attached info). Question: Suppose that the amount of the cash won by them is RM128,000 each and all else being unchanged, what is the average return of Investment B?",Approximately 14.78%,Approximately 19.54%,Approximately 20.00%,None of the optional answer is correct,B,,"Based on the previous question, average annual return of investment B is 10%. Even if the investor increase the investment amount from RM64,000 to RM128,000, the return of the investment B is still the same as 10%."
+,radio,Q40. What is (are) the basic quality(ies) of a professional Unit Trust Consultant (UTC)?,Give timely and accurate information,Keep abreast on the latest development in the unit trust industry,Provide on-going advisory and services,All of the potential answer are correct,C,,"As a professional UTC, you should:
+- Give timely and accurate information
+- Keep abreast on the latest development in the unit trust industry
+- Provide on-going advisory and services"

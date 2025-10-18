@@ -1,0 +1,46 @@
+title,type,question,A,B,C,D,answer,image,explain
+,radio,Q44. Which of the following could not be used as an investment benchmark when assessing investment performance?,The Kuala Lumpur Inter-Bank Offer Rate (KLIBOR),Kuala Lumpur Composite Index (KLCI),5-year bond rate,Current account as a percentage of Gross Domestic Product (GDP),B,,Current Account as a percentage of Gross Domestic Product (GDP) is not a suitable data to use as a benchmark in assessing a fund's performance.
+,radio,"Q45. Unitholder F is a first-time investor and has purchased UTS XYZ from UTC B, on Tuesday, 2 May 2006. After returning home, he met some friends who have experiences in UTS investment. After discussion with his friends, he started to feel that he did not fully understand the purchase and he also felt that UTC B has misled him by focusing more on past performance of UTS XYZ. What is your advice to the Unitholder F?",Unitholder F cannot do anything at all as the purchase has been made,Unitholder F should wait for the right time to repurchase all his units,Unitholder F can exercise his cooling-off right which is an opportunity to reconsider his purchase,Unitholder F should terminate UTC B’s services immediately,D,,First time investor is entitled for cooling-off right.
+,radio,"Q46. Fixed-income funds (bond funds) are generally said to have lower risks than equity funds. Hence, what can be expected from the return of these funds?",Usually higher than equity funds,Usually lower than equity funds,Consistently higher than equity funds,None of the optional answers are correct,C,,"Higher risk, potentially higher return;
+Lower risk, potentially lower return.
+The returns of fixed-income funds (bond funds) usually is lower than equity funds"
+,radio,Q47. What type of investment would you most expect to find in aggressive growth fund?,Investment in capital guaranteed life insurance products,Cash,Investment in properties with regular income,Shares of technology-company recently listed on the stock exchange,D,,"Aggressive Growth Fund investing in more risky investments (such as small cap stocks, technology stocks, etc) and potentially will generate higher returns."
+,radio,Q49. The maximum margin on unit trust financing is fixed at,85%,67%,50%,79%,B,,Loan Financing Margin = 67%
+,radio,"Q50. For every unit trust fund, how many reports must UTMC publish each financial year?",At least one,At least two,At least three,At least four,A,,"For every unit trust scheme, it's a must to issue: interim report and annual report."
+,radio,"Q51. Given Data:- ·Initial Investment - RM 80,000 ·Term of Investment - 3 years ·Expected Investment Return before Fees & Expenses - 10% per annum ·On-going management fee 1.5% per annum ·Initial Service Charge 5% Question: Calculate the expected value of investment at the end of third year.","RM97,317 ","RM101,156 ","RM102,183 ","RM106,480 ",D,,"Step 1: Working Money
+Working Money = Capital / (1 + sales charge)
+= RM80,000 / (1 + 0.05)
+= RM80,000 / 1.05
+= RM76,190.48 (considered as PV at Step 3)
+
+Step 2: Effective Return
+Effective Return = Investment Return before Fees & Expenses [MINUS] On-going Management Fee (or MER) -
+Effective Return = 10% - 1.5% = 8.5%
+
+Step 3: Future Value (Investment Value @ 3rd year)
+FV = PV (1 + i)^n
+FV = RM76,190.48 (1 + 0.085)^3
+FV = RM97,317"
+,radio,"Q52. Given Data:- ·Initial Investment - RM 80,000 ·Term of Investment - 3 years ·Expected Investment Return before Fees & Expenses - 10% per annum ·On-going management fee 1.5% per annum ·Initial Service Charge 5% Question: How long does it approximately take for the expected value of the initial investment to reach RM160,000?",7.2 years,8.5 years,14.4 years,20.6 years,A,,"Apply: Rule of 72
+Initial investment RM80,000, and to become RM160,000, it's double up.
+Effective return = 10% - 1.5% = 8.5%
+
+By applying Rule of 72
+= 72/8.5
+= 8.47 (closest answer is 8.5%)"
+,radio,"Q53. Given Data:- ·Initial Investment - RM 80,000 ·Term of Investment - 3 years ·Expected Investment Return before Fees & Expenses - 10% per annum ·On-going management fee 1.5% per annum ·Initial Service Charge 5% Question: Now assume that the on-going management fee is 1.0% instead of 1.5%, what is the expected value of the investment at the end of third year.","RM98,669 ","RM101,156 ","RM103,602 ","RM106,480 ",A,,"Step 1: Working Money
+Working Money = Capital / (1 + sales charge)
+= RM80,000 / (1 + 0.05)
+= RM80,000 / 1.05
+= RM76,190.48 (considered as PV at Step 3)
+
+Step 2: Effective Return
+Effective Return = Investment Return before Fees & Expenses [MINUS] On-going Management Fee (or MER) -
+Effective Return = 10% - 1.0% = 9%
+
+Step 3: Future Value (Investment Value @ 3rd year)
+FV = PV (1 + i)^n
+FV = RM76,190.48 (1 + 0.09)^3
+FV = RM98,669"
+,radio,"Q54. Mr. X wants to invest RM 200,000.00. What is the maximum amount can he borrows from a financial institution for the investment?","RM134,000.00 ","RM66,000.00 ","RM120,000.00 ","RM80,000.00 ",B,,"Loan Financing, max is 67%
+RM200,000.00 x 67% = RM134,000.00"

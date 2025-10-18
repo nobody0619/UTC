@@ -1,0 +1,31 @@
+title,type,question,A,B,C,D,answer,image,explain
+,radio,"Q12. What are the responsibilities and obligations of UTMC?
+I. process application
+II. custodian of assets of unit trust scheme
+III. maintain unit holder registration & data recording
+IV. regulates the unit trust industry","I, II, III, IV","I, III","I, III, IV",I only,A,,"UTMC: processing application and maintaining the data of unit holders.
+Trustee: custodian of assets of unit trust scheme
+Securities Commission: regulates the unit trust industry"
+,radio,Q13. Under whose name would the assets of unit trust scheme registered,Investor,Stockbroking company,Trustee,UTMC,A,,The UTS assets are held by the trustee on behalf of unitholders
+,radio,Q14. Which of the following statements best describing about Fixed Income Fund?,Cash,Money Market,Bond,Equities,B,,Fixed Income Fund (also known as Bond Fund) mainly invests in Bond
+,radio,Q15. Which of the following is not the rights of Unit Holders?,To obtain information about the unit trust scheme and its performance,To receive profile of board of directors,To redeem units,To select shares for the unit trust scheme's portfolio,B,,"Fund manager will make decision on the fund's portfolio investment, including stock selection."
+,radio,"Q16. Which of the following statements is/are correct?
+I. Aggressive Growth Fund is a type of Equity Unit Trust that generally seeking to provide maximum growth of capital with secondary emphasis on distribution or interest income
+II. Equity Unit Trust can also be an income fund, which invests primarily in bond, government securities, and liquid securities like treasury bill & cash.
+III. In a declining stock market, income fund may show a higher degree of prices stability than aggressive growth fund. However, the income fund may also drive at a slower rate in a rising stock market.",I & III,I Only,"II, III","I, II, III",A,,"Equity Fund can be an Income Fund, where the fund will be investing in Dividend Stocks.
+If a fund investing in bond and government securities, it's a Bond Fund."
+,radio,"Q17. For the Financial Year Ended 31 Dec 2000, the financial statement of ABC Fund shows the following expenses were incurred: Management Fee: RM 150,000 Trustee Fee: RM 8,000 Audit Fee: RM 5,000 Bank charges & other expenses: RM 2,000 The Average Fund Size of ABC fund during the year was RM 10,000,000. Calculate the MER of the fund.",1.72%,1.03%,1.65%,1.40%,A,,"Formula for MER = All Expenses / Average Fund Size x 100%
+MER = (RM150,000 + RM8,000 + RM5,000 + RM2,000) / RM10,000,000 x 100%
+MER = RM165,000 / RM10,000,000 x 100%
+MER = 1.65%"
+,radio,"Q18. Encik Ahmad started his investment in the year of 2015 with the amount of RM50,000 and expected rate of return is 9% per annum. Suppose the investment is able to deliver the above-mentioned yearly return for the past as well as the coming years, when will his investment value become double?",Year 2020,Year 2023,Year 2025,Year 2027,B,,"Apply: Rule of 72
+Rate of Return: 9%
+Years to double up = 72 / 9 = 8 years
+Year 2015 + 8 years = Year 2023"
+,radio,Q19. Which Account in EPF is allowed to invest in Unit Trust?,Account 1,Account 2,Account 3,Account 4,C,,EPF members who have sufficient savings can transfer part of the funds in Account 1 for Unit Trust investments
+,radio,Q20. The Unit Trust Fund is managed in accordance with Shariah Principle & aim to maximise Capital return on medium to long term by investing mainly in equities listed on Bursa Malaysia.,Islamic Equity Fund,Fixed Income Fund,Property Fund,Balanced Fund,D,,"Islamic Fund (or Shariah Fund) is managed in accordance with Shariah Principle, as the fund investing in equities listed on Bursa Malaysia, it's an Islamic Equity Fund.
+
+Fixed Income Fund - investing mainly in bond
+Property Fund - investing in property stock, REIT or Real Estate
+Balanced Fund - investing in stock and bond"
+,radio,Q21. Equity Growth Fund is best described as,Invest mainly in Equities,"Invest Mainly in Bond, Cash & less in equity",Invest mainly in Cash & Bond,Avoid to invest in Equity Market,A,,Equity Growth Fund: investing in equities

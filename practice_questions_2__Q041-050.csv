@@ -1,0 +1,58 @@
+title,type,question,A,B,C,D,answer,image,explain
+,radio,"Q41. A family spent RM25,000 on goods and service last year and RM26,125 this year. Assume that the pattern, value of consumption and the inflation rate remain unchanged. Question: How much money will the family need next year to maintain the same living standard as this year?","RM27,301 ","RM27,250 ","RM26,125 ",None of the optional answer is correct,C,,"Step 1: What is the inflation rate?
+[Last Year] RM25,000 --> [This Year] RM26,125
+Inflation rate = (Amount for this year [MINUS] Amount for last year) / Amount for last year x 100%
+= (RM26,125 - RM25,000) / RM25,000 x 100%
+= 4.5%
+
+Step 2: Amount for next year?
+Amount for next year = Amount for this year + inflation rate
+= RM26,125 + 4.5%
+= RM27,301"
+,radio,"Q42. A family spent RM25,000 on goods and service last year and RM26,125 this year. Assume that the pattern, value of consumption and the inflation rate remain unchanged. Question: Base on the above inflation rate, if an investor earns a 5% return for his investment, his marginal tax is 20%, what is his effective return after tax and inflation?",15%,-15%,-0.50%,-0.30%,B,,"Effective Rate of Return after Tax and Inflation
+= Investment Return - ( Investment Return x Tax Rate) - Inflation Rate
+= 5% - (5% x 20/100) - 4.5%
+= 5% - 1% - 4.5%
+= -0.5%"
+,radio,Q43. Which of the following forms the minimum standards of conduct expected registered Unit Trust Consultant (UTC) and are intended to be a guide to ascertain whether a registered UTC is acting in a manner which continue to satisfy the Minimum Standards for Registration?,Code of Ethics and Professionalism,Code of Ethics and Standards of Professional Conduct,Code of Ethics and Standards of Professional Conduct for Multi Level Marketing,None of the optional answer is correct,C,,UTCs must act and comply with Code of Ethics and Standards of Professional Conduct
+,radio,Q44. What is the term used for an investor who opts to receive their income distribution in the form of additional units instead of cash?,Distribution,Distribution Reinvestment,Cash Distribution,Repurchase Price,D,,"2 methods of income distribution:
+(1) - Distribution Reinvestment - the amount will be re-invested into the same UTS in the form of additional units
+(2) - Distribution Payout - the amount will be credited to investors' bank account"
+,radio,"Q45. Choose the correct statements regarding aggressive growth funds.
+I. Generally, these funds invest in common stocks with a high potential for rapid growth and capital appreciation.
+II. These funds seek to provide maximum capital growth with less emphasis on distribution or interest income.
+III. These funds generally incur higher risks in an effort to secure more pronounced growth.
+IV. Investors who must conserve their principal or who must maximize current income are most suitable to invest in these funds.","I, II & III","II, III & IV","I, III & IV",all of the optional answer are correct,B,,"Aggressive Growth Funds
+- invest in high growth stocks with potentially higher returns (or capital appreciation)
+- to maximize the capital growth (and less emphasize on the income)
+- more risky investment and focus on capital growth"
+,radio,Q46. A unit trust scheme that was among the top ten performers last year is likely to,End up among the top ten performers this year,Be among the bottom ten unit trust schemes this year,Rank somewhere in the middle this year,Be extremely difficult to predict how well a unit trust scheme will perform this year based on its performance last year,D,,Past performance of a unit trust fund is not an indicator of future performance.
+,radio,"Q47. To meet the challenges posed by the new and sophisticated customers, UTCs must strive to do the following, except",Maintain high ethical standard in their marketing,Hard Sell,Fine-tune their product knowledge,Acquire suitable professional qualification,D,,"UTCs must practice and:
+- maintain high ethical standard in their marketing;
+- fine-tune their product knowledge;
+- acquire suitable professional qualification
+
+To avoid: hard selling"
+,radio,"Q48. What must you not say to a potential investor?
+I. Unit trust is as safe as fixed deposit
+II. The market value of your capital may be lower than initially invested
+III. Return in Unit trust is not fixed
+IV. You should diversity your portfolio and have some fixed deposits",I only,"II, III & IV","I, II and III",All of the above answers are correct,B,,"Unit trust investments involved risk. As a UTC, you should not saying that unit trust is as safe as fixed deposit to potential investors."
+,radio,"Q49. Assume that no initial sales charge was imposed, an investor has invested lump sum money with the price of RM0.70/unit. 5 years later he decided to redeem all his investment at RM1.20 and total proceed was RM15,000. How much had he invested 5 years ago?","RM10,500 ","RM15,000 ","RM12,600 ","RM8,750 ",B,,"Step 1: Total no. of units
+REDEEM all his investment based on the price of RM1.20 and total proceed = RM15,000
+Total no. of units = Total Proceed / Fund Price
+= RM15,000 / RM1.20
+= 12,500 units
+
+Step 2: Calculate his investment amount during initial (5 years ago)
+Investment amount = total no. of units x Fund Price
+= 12,500 units x RM0.70
+= RM8,750"
+,radio,"Q50. Unit trust distributions can be made up of the following
+I. Interest earned
+II. Capital gains
+III. On-going management fee
+IV. Dividends","I, II, IV",I & II,"I, II, III & IV","I, II, III",A,,"The sources of income distribution:
+- interest income / interest earned
+- dividend income / dividend earned
+- capital gains from the disposal of assets"
