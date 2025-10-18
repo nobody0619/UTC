@@ -19,12 +19,12 @@
       linear-gradient(180deg, #0b1220, #0f172a 50%, #0b1220 100%);
     min-height:100vh; display:flex; align-items:flex-start; justify-content:center; padding:28px 16px;
   }
-  .card{width:100%; max-width:780px; background:var(--card); border:1px solid #334155; border-radius:18px; padding:20px; backdrop-filter: blur(6px); box-shadow: 0 20px 40px #00000066;}
+  .card{width:100%; max-width:980px; background:var(--card); border:1px solid #334155; border-radius:18px; padding:20px; backdrop-filter: blur(6px); box-shadow: 0 20px 40px #00000066;}
   h1,h2,h3{margin:0 0 10px}
   #topNote{font-size:14px; color:var(--muted); margin-bottom:6px}
-  #welcome,#menu,#quiz,#finish{margin:6px 0}
-  #menu,#quiz,#finish{display:none}
-  .row{display:flex; gap:10px; align-items:center}
+  #welcome,#menu,#quiz,#finish,#history{margin:6px 0}
+  #menu,#quiz,#finish,#history{display:none}
+  .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
   .btn{padding:10px 14px; border:1px solid #334155; border-radius:12px; background:linear-gradient(180deg, #1f2937, #111827); color:var(--text); cursor:pointer; transition:.2s; font-weight:600;}
   .btn:hover{transform:translateY(-1px); box-shadow:0 6px 16px #00000066; border-color:#3b82f6}
   .btn.accent{background:linear-gradient(180deg, var(--accent), var(--accent-d)); color:#0b1220; border:none}
@@ -37,6 +37,10 @@
   #menu button{margin:6px 6px 0 0}
   .meta{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:10px 0 8px}
   .chip{background:var(--chip); border:1px solid #334155; color:var(--muted); padding:6px 10px; border-radius:999px; font-size:12px}
+  .tabs{display:flex; gap:8px; margin:8px 0 14px}
+  .tab{padding:8px 12px; border:1px solid #334155; border-radius:999px; cursor:pointer; color:var(--muted)}
+  .tab.active{color:#0b1220; background:linear-gradient(180deg, var(--accent), var(--accent-d)); border:none}
+
   .question{ text-align:left; margin:16px 0; padding:16px; border:1px solid #334155; border-radius:14px; background:#0b122066}
   .option-label{ display:block; margin:8px 0; cursor:pointer; line-height:1.4}
   .option-label input{ transform:scale(1.2); margin-right:10px; vertical-align:middle}
@@ -49,28 +53,43 @@
   progress::-webkit-progress-value{ background:linear-gradient(90deg, var(--accent), #a78bfa)}
   #score{font-weight:800} #deltaTag{font-weight:900; margin-left:8px}
   img{ max-width:100%; margin:10px 0; border:2px solid #334155; border-radius:12px}
+
   .overlay{ position:fixed; inset:0; background:#00000080; display:none; align-items:center; justify-content:center; z-index:40}
   .modal{ width:min(720px, 92vw); background:#0b1220; border:1px solid #334155; border-radius:16px; padding:18px; box-shadow:0 20px 40px #00000099}
   .modal h3{margin-bottom:8px} .modal .body{ max-height:52vh; overflow:auto} .modal .actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:14px}
   #trialBanner{margin-top:8px} .trial{ padding:10px; border-radius:12px; border:1px solid #334155; background:#0b1220; color:#e2e8f0; display:none}
   .trial strong{ color:var(--accent)} .hint{font-size:12px; color:var(--muted)}
+
+  /* History table */
+  table{width:100%; border-collapse:collapse; font-size:14px}
+  th,td{border-bottom:1px solid #334155; padding:8px 6px; text-align:left}
+  th{color:#cbd5e1}
+  .num{text-align:right}
+  .muted{color:var(--muted)}
 </style>
 </head>
 <body>
   <div class="card">
-    <div id="topNote">PMC Quiz • Secure Mode (Per-Account Password)</div>
+    <div id="topNote">PMC Quiz • Secure Mode (Per-Account Password) • With History</div>
 
-    <!-- 1) 登录（包在 form 里，防警告） -->
+    <!-- 顶部标签 -->
+    <div class="tabs">
+      <div id="tabLogin" class="tab active">Login</div>
+      <div id="tabMenu" class="tab" style="display:none">Chapters</div>
+      <div id="tabHistory" class="tab" style="display:none">History</div>
+    </div>
+
+    <!-- 1) 登录 -->
     <div id="welcome">
       <h2>Sign in</h2>
       <p class="hint">每个账号都有自己的密码；或使用 <code>testing</code> 开启 5 分钟试用。</p>
       <form id="loginForm" autocomplete="on" onsubmit="return false;">
-        <div class="row" style="gap:12px; flex-wrap:wrap">
-          <div style="flex:1 1 220px">
+        <div class="row" style="gap:12px;">
+          <div style="flex:1 1 280px">
             <label class="hint">Name</label>
             <input type="text" id="username" placeholder="Your name" autocomplete="username"/>
           </div>
-          <div style="flex:1 1 220px">
+          <div style="flex:1 1 280px">
             <label class="hint">Password</label>
             <input type="password" id="accessCode" placeholder="Account password" autocomplete="current-password"/>
           </div>
@@ -85,6 +104,11 @@
 
     <!-- 2) 章节 -->
     <div id="menu">
+      <div class="meta">
+        <span class="chip" id="userChip">User</span>
+        <span class="chip" id="roleChip" style="display:none"></span>
+        <span class="chip" id="timerChip">00:00</span>
+      </div>
       <h2>Select Chapter</h2>
       <div id="chapters"></div>
     </div>
@@ -92,9 +116,8 @@
     <!-- 3) 测验 -->
     <div id="quiz">
       <div class="meta">
-        <span class="chip" id="userChip">User</span>
-        <span class="chip" id="roleChip" style="display:none"></span>
-        <span class="chip" id="timerChip">00:00</span>
+        <span class="chip" id="userChip2">User</span>
+        <span class="chip" id="timerChip2">00:00</span>
       </div>
       <h3 id="quiz-title"></h3>
       <div class="row" style="justify-content:space-between; margin:8px 0">
@@ -111,6 +134,35 @@
       <p id="stats"></p>
       <div id="controls" class="row"></div>
     </div>
+
+    <!-- 5) 历史成绩 -->
+    <div id="history">
+      <div class="row" style="justify-content:space-between;">
+        <h3 style="margin:0">History</h3>
+        <div class="row">
+          <button id="btnRefresh" class="btn">Refresh</button>
+          <button id="btnBackChapters" class="btn ghost">Back to Chapters</button>
+        </div>
+      </div>
+      <p class="hint" id="historyHint">自动从 Google Sheet 读取你的历史成绩（最近 50 条）。</p>
+      <div class="row" id="summaryRow" style="gap:8px; margin:8px 0"></div>
+      <div style="overflow:auto; max-height:50vh; border:1px solid #334155; border-radius:12px; padding:8px;">
+        <table id="historyTable">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>User</th>
+              <th>Quiz/Chapter</th>
+              <th class="num">Score</th>
+              <th class="num">Correct</th>
+              <th class="num">Wrong</th>
+              <th class="num">Duration (s)</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
   <!-- 解释弹窗 -->
@@ -124,7 +176,7 @@
     </div>
   </div>
 
-  <!-- GAS post -->
+  <!-- 提交到 GAS -->
   <iframe name="postFrame" style="display:none;"></iframe>
   <form id="postForm"
         action="https://script.google.com/macros/s/AKfycbyek_JoRdNny8wiHO_nOyiNJV2Gt2qoVjiJ3rhFZu0BkbWYflpVXYiE-_Gl7xHQROM/exec"
@@ -137,9 +189,18 @@
 (function(){
   'use strict';
 
-  /* ===== 基本配置 ===== */
+  /* ===== 配置：历史成绩数据源 =====
+     任选其一填入即可（都填则优先使用 PRIMARY，失败再用 FALLBACK）
+     - HISTORY_PRIMARY_URL 例：你的 Apps Script： .../exec?mode=list
+     - HISTORY_FALLBACK_CSV 例：Google Sheet CSV：.../gviz/tq?tqx=out:csv&sheet=Scores
+  */
+  const HISTORY_PRIMARY_URL  = ''; // ← 可填 Apps Script 列表接口（GET）
+  const HISTORY_FALLBACK_CSV = ''; // ← 可填 Google Sheet CSV 导出链接
+
+  /* ===== 其他配置 ===== */
   const TRIAL_CODE = 'testing';
   const TRIAL_MINUTES = 5;
+  const HISTORY_LIMIT = 50; // 历史记录条数上限
 
   const LS_SESSION = 'pmc_session_until';
   const LS_TRIAL   = 'pmc_trial_until';
@@ -148,7 +209,7 @@
 
   /* ===== 状态 ===== */
   let user = '', role = '';
-  let accounts = null; // 从 password.csv 加载
+  let accounts = null;
   let chapters = [], grouped = {};
   let chapterKey, sectionKey, labelKey, sheetKey;
   let currentChapter = '', sectionList = [], secIndex = 0;
@@ -157,141 +218,127 @@
 
   const MAX_OPTS = 15;
 
-  /* ===== DOM 引用 ===== */
+  /* ===== DOM ===== */
   const $ = (id)=>document.getElementById(id);
-  const elWelcome   = $('welcome');
-  const elMenu      = $('menu');
-  const elChapters  = $('chapters');
-  const elQuiz      = $('quiz');
-  const elFinish    = $('finish');
-  const elQuestionA = $('question-area');
-  const elProgress  = $('progress');
-  const elScore     = $('score');
-  const elDelta     = $('deltaTag');
-  const elRemain    = $('remaining');
-  const elTitle     = $('quiz-title');
-  const elUserChip  = $('userChip');
-  const elRoleChip  = $('roleChip');
-  const elTimerChip = $('timerChip');
-  const elTrial     = $('trialBanner');
-  const overlay     = $('overlay');
-  const modalTitle  = $('modalTitle');
-  const modalBody   = $('modalBody');
-  const modalNext   = $('modalNext');
+  const elWelcome=$('welcome'), elMenu=$('menu'), elQuiz=$('quiz'), elFinish=$('finish'), elHistory=$('history');
+  const elChapters=$('chapters'), elQuestionA=$('question-area'), elProgress=$('progress');
+  const elScore=$('score'), elDelta=$('deltaTag'), elRemain=$('remaining'), elTitle=$('quiz-title');
+  const elUserChip=$('userChip'), elUserChip2=$('userChip2'), elRoleChip=$('roleChip');
+  const elTimerChip=$('timerChip'), elTimerChip2=$('timerChip2'), elTrial=$('trialBanner');
+  const overlay=$('overlay'), modalTitle=$('modalTitle'), modalBody=$('modalBody'), modalNext=$('modalNext');
+  const tabLogin=$('tabLogin'), tabMenu=$('tabMenu'), tabHistory=$('tabHistory');
+  const historyTable=$('historyTable').querySelector('tbody'), summaryRow=$('summaryRow');
+
+  /* ===== Tabs ===== */
+  function setTab(active){
+    [tabLogin,tabMenu,tabHistory].forEach(t=>t.classList.remove('active'));
+    ['welcome','menu','history'].forEach(id=>$(id).style.display='none');
+    if(active==='login'){ tabLogin.classList.add('active'); elWelcome.style.display='block'; }
+    if(active==='menu'){ tabMenu.classList.add('active'); elMenu.style.display='block'; }
+    if(active==='history'){ tabHistory.classList.add('active'); elHistory.style.display='block'; }
+  }
+  tabMenu.onclick = ()=> setTab('menu');
+  tabHistory.onclick = ()=> setTab('history');
+  $('btnBackChapters').onclick = ()=> setTab('menu');
 
   /* ===== 工具 ===== */
-  const now = ()=> Date.now();
-  const fmt = (ms)=>{ let s=Math.max(0,Math.floor(ms/1000)); const m=Math.floor(s/60); s%=60; return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; };
-  const readUntil = (k)=>{ const raw=localStorage.getItem(k); return raw?parseInt(raw,10):0; };
-  const writeUntil= (k,ts)=>{ if(ts){ localStorage.setItem(k,String(ts)); } else { localStorage.removeItem(k); } };
-  const shuffle = (arr)=>{ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; };
+  const now=()=>Date.now();
+  const fmtTime=(ms)=>{ let s=Math.max(0,Math.floor(ms/1000)); const m=Math.floor(s/60); s%=60; return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; };
+  const readUntil=(k)=>{ const raw=localStorage.getItem(k); return raw?parseInt(raw,10):0; };
+  const writeUntil=(k,ts)=>{ if(ts){ localStorage.setItem(k,String(ts)); } else { localStorage.removeItem(k); } };
+  const shuffle=(arr)=>{ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; };
 
   function startTicker(){
     stopTicker();
     timerTick=setInterval(()=>{
       const elapsed=now()-chapterStart;
-      elTimerChip.textContent = fmt(elapsed);
+      elTimerChip.textContent=fmtTime(elapsed);
+      elTimerChip2.textContent=fmtTime(elapsed);
       if(isTrial){
         const left=sessionUntil-now();
         if(left<=0){ alert('Trial expired. Returning to sign in.'); endSession(); }
-        else{ elTrial.style.display='block'; elTrial.innerHTML=`试用模式：剩余 <strong>${fmt(left)}</strong>`; }
+        else{ elTrial.style.display='block'; elTrial.innerHTML=`试用模式：剩余 <strong>${fmtTime(left)}</strong>`; }
       }
     },500);
   }
-  function stopTicker(){ if(timerTick){ clearInterval(timerTick); timerTick=null; } }
+  const stopTicker=()=>{ if(timerTick){ clearInterval(timerTick); timerTick=null; } };
   function endSession(){
     writeUntil(LS_SESSION,0); writeUntil(LS_TRIAL,0);
     isTrial=false; stopTicker();
-    elQuiz.style.display='none'; elMenu.style.display='none'; elFinish.style.display='none';
-    elWelcome.style.display='block'; elTrial.style.display='none';
+    elQuiz.style.display='none'; elFinish.style.display='none';
+    setTab('login'); elTrial.style.display='none';
   }
   function gateKeep(){
-    sessionUntil = readUntil(LS_SESSION);
+    sessionUntil=readUntil(LS_SESSION);
     if(sessionUntil>now()){
-      isTrial = (readUntil(LS_TRIAL)===sessionUntil);
+      isTrial=(readUntil(LS_TRIAL)===sessionUntil);
       const savedName=localStorage.getItem(LS_NAME)||''; const savedRole=localStorage.getItem(LS_ROLE)||'';
       if(savedName) $('username').value=savedName;
       if(savedRole){ role=savedRole; elRoleChip.textContent=`Role: ${role}`; elRoleChip.style.display='inline-flex'; }
-      elTrial.style.display = isTrial?'block':'none';
+      elTrial.style.display=isTrial?'block':'none';
     } else {
       endSession();
     }
   }
   gateKeep();
 
-  /* ===== 账号加载 & 校验 ===== */
-  function normalizeKeys(row){
-    const map={}; Object.keys(row).forEach(k=>{ map[String(k||'').trim().toLowerCase()] = k; }); return map;
-  }
-  function field(row,map,keys){
-    for(const k of keys){ if(map[k]!=null){ const v=row[map[k]]; if(v!=null && String(v).trim()!=='') return String(v).trim(); } }
-    return '';
-  }
+  /* ===== 账号 ===== */
+  function normalizeKeys(row){ const map={}; Object.keys(row).forEach(k=>{ map[String(k||'').trim().toLowerCase()]=k; }); return map; }
+  function getField(row,map,keys){ for(const k of keys){ if(map[k]!=null){ const v=row[map[k]]; if(v!=null && String(v).trim()!=='') return String(v).trim(); } } return ''; }
+
   function loadAccounts(cb){
     if(accounts){ cb(); return; }
     Papa.parse('password.csv',{download:true,header:true,skipEmptyLines:true,complete:(res)=>{
-      try{
-        accounts = res.data.map(r=>{
-          const m=normalizeKeys(r);
-          return {
-            name: field(r,m,['name','account','user']),
-            password: field(r,m,['password','pass']),
-            role: field(r,m,['role']),
-            active: field(r,m,['active'])||'1'
-          };
-        }).filter(x=>x.name && x.password);
-        if(!accounts.length){ console.error('[password.csv] 空表或缺列'); alert('password.csv 为空或缺少 name/password 列'); }
-        cb();
-      }catch(e){
-        console.error('解析 password.csv 出错：', e);
-        alert('无法读取 password.csv，请检查表头与内容'); 
-      }
+      accounts = res.data.map(r=>{
+        const m=normalizeKeys(r);
+        return {
+          name:getField(r,m,['name','account','user']),
+          password:getField(r,m,['password','pass']),
+          role:getField(r,m,['role']),
+          active:getField(r,m,['active'])||'1'
+        };
+      }).filter(x=>x.name && x.password);
+      if(!accounts.length) alert('password.csv 为空或缺少 name/password 列');
+      cb();
     }, error:(e)=>{ console.error('加载 password.csv 出错：', e); alert('找不到 password.csv 或无法读取'); }});
   }
-  function findAccountByName(nm){
-    const lower=nm.toLowerCase();
-    return accounts.find(a=>a.name.toLowerCase()===lower)||null;
-  }
+  const findAccountByName=(nm)=>{ const lower=nm.toLowerCase(); return accounts.find(a=>a.name.toLowerCase()===lower)||null; };
 
   /* ===== 登录按钮 ===== */
   $('clearBtn').onclick = ()=>{
-    endSession();
-    $('username').value=''; $('accessCode').value='';
+    endSession(); $('username').value=''; $('accessCode').value='';
     localStorage.removeItem(LS_NAME); localStorage.removeItem(LS_ROLE);
+    setTab('login');
   };
 
   $('loginForm').addEventListener('submit', function(){
-    const nm = $('username').value.trim();
-    const pwd = $('accessCode').value.trim();
+    const nm=$('username').value.trim();
+    const pwd=$('accessCode').value.trim();
     if(!nm){ alert('Please enter your name'); return; }
     if(!pwd){ alert('Password is required'); return; }
 
-    // 试用
     if(pwd===TRIAL_CODE){
-      const ts=now();
-      user=nm; role='Trial';
+      const ts=now(); user=nm; role='Trial';
       sessionUntil=ts+TRIAL_MINUTES*60*1000; isTrial=true;
       writeUntil(LS_SESSION,sessionUntil); writeUntil(LS_TRIAL,sessionUntil);
       localStorage.setItem(LS_NAME,user); localStorage.setItem(LS_ROLE,role);
-      elUserChip.textContent=`User: ${user}`; elRoleChip.textContent=`Role: ${role}`; elRoleChip.style.display='inline-flex';
-      elWelcome.style.display='none'; loadChapters(); startTicker(); return;
+      elUserChip.textContent=`User: ${user}`; elUserChip2.textContent=`User: ${user}`;
+      elRoleChip.textContent=`Role: ${role}`; elRoleChip.style.display='inline-flex';
+      setTab('menu'); loadChapters(); startTicker(); loadHistory(); tabMenu.style.display='inline-flex'; tabHistory.style.display='inline-flex'; return;
     }
 
-    // 正式账号
     loadAccounts(()=>{
       const acc=findAccountByName(nm);
       if(!acc){ alert('Account not found'); return; }
       if(String(acc.active).trim()==='0'){ alert('This account is disabled'); return; }
       if(pwd!==acc.password){ alert('Invalid password'); return; }
-
-      const ts=now();
-      user=acc.name; role=acc.role||'User';
+      const ts=now(); user=acc.name; role=acc.role||'User';
       sessionUntil=ts+24*60*60*1000; isTrial=false;
       writeUntil(LS_SESSION,sessionUntil); writeUntil(LS_TRIAL,0);
       localStorage.setItem(LS_NAME,user); localStorage.setItem(LS_ROLE,role);
-      elUserChip.textContent=`User: ${user}`;
+      elUserChip.textContent=`User: ${user}`; elUserChip2.textContent=`User: ${user}`;
       if(role){ elRoleChip.textContent=`Role: ${role}`; elRoleChip.style.display='inline-flex'; } else { elRoleChip.style.display='none'; }
-      elWelcome.style.display='none'; loadChapters(); startTicker();
+      setTab('menu'); loadChapters(); startTicker(); loadHistory(); tabMenu.style.display='inline-flex'; tabHistory.style.display='inline-flex';
     });
   });
 
@@ -310,7 +357,7 @@
 
       grouped={}; chapters.forEach(r=>{ const c=r[chapterKey]; (grouped[c]||(grouped[c]=[])).push(r); });
 
-      elMenu.style.display='block'; elChapters.innerHTML='';
+      elChapters.innerHTML='';
       Object.keys(grouped).forEach(chap=>{
         const btn=document.createElement('button'); btn.className='btn'; btn.textContent=chap; btn.onclick=()=>startChapter(chap); elChapters.appendChild(btn);
       });
@@ -321,18 +368,18 @@
     if(now()>=sessionUntil){ endSession(); return; }
     currentChapter=chap;
     sectionList = grouped[chap].sort((a,b)=> a[sectionKey].localeCompare(b[sectionKey],undefined,{numeric:true}));
-    secIndex=0; elMenu.style.display='none'; loadSection();
+    secIndex=0; elQuiz.style.display='none'; loadSection();
   }
 
   function loadSection(){
     if(now()>=sessionUntil){ endSession(); return; }
+    setTab('menu'); elQuiz.style.display='block'; elFinish.style.display='none';
     const sec=sectionList[secIndex];
     elTitle.textContent = `${currentChapter} – ${sec[sectionKey]}: ${sec[labelKey]}`;
     score=correct=wrong=0; chapterStart=now();
     Papa.parse(sec[sheetKey],{download:true,header:true,skipEmptyLines:true,complete:(r)=>{
       qs = r.data.map(q=>({...q,attempt:0}));
       queue = shuffle([...qs]);
-      elQuiz.style.display='block'; elFinish.style.display='none';
       updateUI(0); nextQ();
     }, error:(e)=>{ console.error('加载题库出错：', e); alert('无法读取题库 CSV'); }});
   }
@@ -340,7 +387,6 @@
   function updateUI(delta){
     if(delta===0){ elDelta.textContent=''; elDelta.style.color='inherit'; }
     else{ elDelta.textContent=(delta>0?`+${delta}`:`${delta}`); elDelta.style.color=delta>0?'var(--ok)':'var(--bad)'; }
-    // 写到第一个文本节点（兼容性好）
     elScore.childNodes[0].nodeValue = `Score: ${score} `;
     elRemain.textContent=`Remaining: ${queue.length}`;
     elProgress.max=qs.length; elProgress.value=qs.length-queue.length;
@@ -430,8 +476,7 @@
                                 : `<div class="explain"><em>No explanation provided for this item.</em></div>`;
       overlay.style.display='flex';
       const goNext=()=>{ overlay.style.display='none'; nextQ(); };
-      modalNext.onclick=goNext;
-      overlay.onclick=(e)=>{ if(e.target===overlay) goNext(); };
+      modalNext.onclick=goNext; overlay.onclick=(e)=>{ if(e.target===overlay) goNext(); };
     };
     wrap.appendChild(sb);
     elQuestionA.appendChild(wrap);
@@ -450,10 +495,153 @@
     const ctrl=$('controls'); ctrl.innerHTML='';
     const btn=document.createElement('button'); btn.className='btn accent';
     btn.textContent = secIndex < sectionList.length-1 ? 'Next Section' : 'Back to Chapters';
-    btn.onclick=()=>{ elFinish.style.display='none'; if(secIndex < sectionList.length-1){ secIndex++; loadSection(); } else { elMenu.style.display='block'; } };
+    btn.onclick=()=>{ elFinish.style.display='none'; if(secIndex < sectionList.length-1){ secIndex++; loadSection(); } else { setTab('menu'); } };
     ctrl.appendChild(btn);
-    const backBtn=document.createElement('button'); backBtn.className='btn'; backBtn.textContent='Exit'; backBtn.onclick=endSession; ctrl.appendChild(backBtn);
+    const backBtn=document.createElement('button'); backBtn.className='btn'; backBtn.textContent='Exit'; backBtn.onclick=()=>{ elFinish.style.display='none'; setTab('menu'); }; ctrl.appendChild(backBtn);
+
+    // 更新历史（提交后刷新一次）
+    loadHistory(true);
   }
+
+  /* ===== 历史成绩 ===== */
+  $('btnRefresh').onclick = ()=> loadHistory(true);
+
+  // 尝试从 PRIMARY(JSON/CSV)→FALLBACK(CSV) 读取
+  async function fetchText(url){
+    const res = await fetch(url, { cache:'no-store' });
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    return res.text();
+  }
+
+  // 尝试解析为 JSON，失败则返回 null
+  function tryJson(text){
+    try{
+      const obj = JSON.parse(text);
+      if (Array.isArray(obj)) return obj;
+      if (obj && Array.isArray(obj.data)) return obj.data;
+    }catch(_){}
+    return null;
+  }
+
+  // 解析 CSV 为对象数组
+  function parseCsv(text){
+    return new Promise((resolve)=>{
+      Papa.parse(text, { header:true, skipEmptyLines:true, complete:(r)=> resolve(r.data) });
+    });
+  }
+
+  // 自动映射列
+  function mapCols(row){
+    const m={};
+    Object.keys(row).forEach(k=>{ m[String(k||'').trim().toLowerCase()] = k; });
+    return (keys)=> {
+      for(const key of keys){ if(m[key]!=null) return m[key]; }
+      return null;
+    };
+  }
+
+  // 核心：加载 & 渲染历史
+  async function loadHistory(force=false){
+    if(!user) return;
+    if(now()>=sessionUntil){ endSession(); return; }
+    setTab('history'); // 切到历史页
+    historyTable.innerHTML = `<tr><td colspan="7" class="muted">Loading...</td></tr>`;
+    summaryRow.innerHTML = '';
+
+    const tryUrls = [];
+    if(HISTORY_PRIMARY_URL) tryUrls.push(HISTORY_PRIMARY_URL);
+    if(HISTORY_FALLBACK_CSV) tryUrls.push(HISTORY_FALLBACK_CSV);
+    if(tryUrls.length===0){
+      historyTable.innerHTML = `<tr><td colspan="7" class="muted">请在代码顶部设置 HISTORY_PRIMARY_URL 或 HISTORY_FALLBACK_CSV。</td></tr>`;
+      return;
+    }
+
+    let rows=null, lastErr=null;
+    for(const url of tryUrls){
+      try{
+        const txt = await fetchText(url);
+        const j = tryJson(txt);
+        if(j){ rows = j; break; }
+        rows = await parseCsv(txt); break;
+      }catch(e){ lastErr=e; }
+    }
+    if(!rows){
+      historyTable.innerHTML = `<tr><td colspan="7" class="muted">无法加载历史成绩：${lastErr?lastErr.message:'未知错误'}</td></tr>`;
+      return;
+    }
+
+    // 过滤出当前用户
+    const out=[];
+    for(const r of rows){
+      const pick = mapCols(r);
+      const kName = pick(['name','user','account','student']);
+      const kQuiz = pick(['quizid','quiz','chapter','paper','section']);
+      const kScore= pick(['score','mark','marks']);
+      const kC    = pick(['correct','right']);
+      const kW    = pick(['wrong','incorrect']);
+      const kDur  = pick(['duration','seconds','time','timesec']);
+      const kTs   = pick(['timestamp','date','datetime','time']);
+      const nm    = kName ? String(r[kName]||'').trim() : '';
+      if(!nm) continue;
+      if(nm.toLowerCase()!==user.toLowerCase()) continue;
+
+      out.push({
+        date: kTs ? String(r[kTs]||'').trim() : '',
+        name: nm,
+        quiz: kQuiz ? String(r[kQuiz]||'').trim() : '',
+        score: kScore != null ? Number(r[kScore]||0) : null,
+        correct: kC != null ? Number(r[kC]||0) : null,
+        wrong: kW != null ? Number(r[kW]||0) : null,
+        duration: kDur != null ? Number(r[kDur]||0) : null
+      });
+    }
+
+    // 按时间/分数降序粗略排序（没有日期时按原序）
+    out.sort((a,b)=>{
+      if(a.date && b.date){ return (new Date(b.date))- (new Date(a.date)); }
+      if(a.score!=null && b.score!=null){ return b.score - a.score; }
+      return 0;
+    });
+
+    const limited = out.slice(0, HISTORY_LIMIT);
+
+    // 渲染表
+    if(!limited.length){
+      historyTable.innerHTML = `<tr><td colspan="7" class="muted">没有你的历史记录。</td></tr>`;
+    }else{
+      historyTable.innerHTML = limited.map(r=>`
+        <tr>
+          <td>${r.date||'<span class="muted">—</span>'}</td>
+          <td>${r.name}</td>
+          <td>${r.quiz||'<span class="muted">—</span>'}</td>
+          <td class="num">${r.score!=null?r.score:'—'}</td>
+          <td class="num">${r.correct!=null?r.correct:'—'}</td>
+          <td class="num">${r.wrong!=null?r.wrong:'—'}</td>
+          <td class="num">${r.duration!=null?r.duration:'—'}</td>
+        </tr>
+      `).join('');
+    }
+
+    // 统计
+    if(limited.length){
+      const n = limited.length;
+      const scores = limited.map(x=>x.score).filter(x=>typeof x==='number' && !isNaN(x));
+      const times  = limited.map(x=>x.duration).filter(x=>typeof x==='number' && !isNaN(x));
+      const avg = scores.length ? (scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(2) : '—';
+      const max = scores.length ? Math.max(...scores) : '—';
+      const last = limited[0];
+      summaryRow.innerHTML = `
+        <span class="chip">Records: ${n}</span>
+        <span class="chip">Avg Score: ${avg}</span>
+        <span class="chip">Best: ${max}</span>
+        <span class="chip">Last: ${last.score!=null?last.score:'—'}${last.quiz?(' • '+last.quiz):''}</span>
+        <span class="chip">Avg Time(s): ${times.length?(Math.round(times.reduce((a,b)=>a+b,0)/times.length)):'—'}</span>
+      `;
+    }
+  }
+
+  /* ===== 事件：刷新按钮 ===== */
+  // 已在上面绑定
 
 })();
 </script>
