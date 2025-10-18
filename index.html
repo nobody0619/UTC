@@ -1,90 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Pulbic Mutual Consultant Exam Training</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-  <style>
-    :root{
-      --bg:#0f172a; --card:#111827ee; --accent:#22d3ee; --accent-d:#06b6d4;
-      --ok:#22c55e; --bad:#ef4444; --muted:#9ca3af; --text:#e5e7eb; --chip:#1f2937;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "PingFang SC", "Microsoft YaHei", sans-serif;
-      color:var(--text); background:
-        radial-gradient(800px 400px at 10% -10%, #22d3ee33, transparent 60%),
-        radial-gradient(800px 400px at 110% 10%, #f472b633, transparent 60%),
-        linear-gradient(180deg, #0b1220, #0f172a 50%, #0b1220 100%);
-      min-height:100vh; display:flex; align-items:flex-start; justify-content:center; padding:28px 16px;
-    }
-    .card{width:100%; max-width:780px; background:var(--card); border:1px solid #334155; border-radius:18px; padding:20px; backdrop-filter: blur(6px); box-shadow: 0 20px 40px #00000066;}
-    h1,h2,h3{margin:0 0 10px}
-    #topNote{font-size:14px; color:var(--muted); margin-bottom:6px}
-    #welcome,#menu,#quiz,#finish{margin:6px 0}
-    #menu,#quiz,#finish{display:none}
-    .row{display:flex; gap:10px; align-items:center}
-    .btn{padding:10px 14px; border:1px solid #334155; border-radius:12px; background:linear-gradient(180deg, #1f2937, #111827); color:var(--text); cursor:pointer; transition:.2s; font-weight:600;}
-    .btn:hover{transform:translateY(-1px); box-shadow:0 6px 16px #00000066; border-color:#3b82f6}
-    .btn.accent{background:linear-gradient(180deg, var(--accent), var(--accent-d)); color:#0b1220; border:none}
-    .btn.ghost{background:#0b122000; border:1px dashed #334155}
-    input[type="text"], input[type="password"]{width:100%; padding:12px 14px; border-radius:12px; border:1px solid #334155; outline:none; background:#0b1220; color:var(--text); transition:.2s;}
-    input[type="text"]:focus, input[type="password"]:focus{border-color:var(--accent)}
-    #menu button{margin:6px 6px 0 0}
-    .meta{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:10px 0 8px}
-    .chip{background:var(--chip); border:1px solid #334155; color:var(--muted); padding:6px 10px; border-radius:999px; font-size:12px}
-    .question{ text-align:left; margin:16px 0; padding:16px; border:1px solid #334155; border-radius:14px; background:#0b122066}
-    .option-label{ display:block; margin:8px 0; cursor:pointer; line-height:1.4}
-    .option-label input{ transform:scale(1.2); margin-right:10px; vertical-align:middle}
-    .feedback{ font-weight:700; margin:12px 0}
-    .feedback.ok{ color:var(--ok)}
-    .feedback.bad{ color:var(--bad)}
-    .explain{ margin:8px 0; padding:10px; background:#0b1220; border-left:4px solid #64748b; border-radius:10px}
-    progress{ width:100%; height:14px; border:none; background:#0b1220; border-radius:999px; overflow:hidden}
-    progress::-webkit-progress-bar{ background:#0b1220}
-    progress::-webkit-progress-value{ background:linear-gradient(90deg, var(--accent), #a78bfa)}
-    #score{font-weight:800} #deltaTag{font-weight:900; margin-left:8px}
-    img{ max-width:100%; margin:10px 0; border:2px solid #334155; border-radius:12px}
-    .overlay{ position:fixed; inset:0; background:#00000080; display:none; align-items:center; justify-content:center; z-index:40}
-    .modal{ width:min(720px, 92vw); background:#0b1220; border:1px solid #334155; border-radius:16px; padding:18px; box-shadow:0 20px 40px #00000099}
-    .modal h3{margin-bottom:8px} .modal .body{ max-height:52vh; overflow:auto} .modal .actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:14px}
-    #trialBanner{margin-top:8px} .trial{ padding:10px; border-radius:12px; border:1px solid #334155; background:#0b1220; color:#e2e8f0; display:none}
-    .trial strong{ color:var(--accent)} .hint{font-size:12px; color:var(--muted)}
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pulbic Mutual Consultant Exam Training</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+<style>
+  :root{
+    --bg:#0f172a; --card:#111827ee; --accent:#22d3ee; --accent-d:#06b6d4;
+    --ok:#22c55e; --bad:#ef4444; --muted:#9ca3af; --text:#e5e7eb; --chip:#1f2937;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "PingFang SC", "Microsoft YaHei", sans-serif;
+    color:var(--text); background:
+      radial-gradient(800px 400px at 10% -10%, #22d3ee33, transparent 60%),
+      radial-gradient(800px 400px at 110% 10%, #f472b633, transparent 60%),
+      linear-gradient(180deg, #0b1220, #0f172a 50%, #0b1220 100%);
+    min-height:100vh; display:flex; align-items:flex-start; justify-content:center; padding:28px 16px;
+  }
+  .card{width:100%; max-width:780px; background:var(--card); border:1px solid #334155; border-radius:18px; padding:20px; backdrop-filter: blur(6px); box-shadow: 0 20px 40px #00000066;}
+  h1,h2,h3{margin:0 0 10px}
+  #topNote{font-size:14px; color:var(--muted); margin-bottom:6px}
+  #welcome,#menu,#quiz,#finish{margin:6px 0}
+  #menu,#quiz,#finish{display:none}
+  .row{display:flex; gap:10px; align-items:center}
+  .btn{padding:10px 14px; border:1px solid #334155; border-radius:12px; background:linear-gradient(180deg, #1f2937, #111827); color:var(--text); cursor:pointer; transition:.2s; font-weight:600;}
+  .btn:hover{transform:translateY(-1px); box-shadow:0 6px 16px #00000066; border-color:#3b82f6}
+  .btn.accent{background:linear-gradient(180deg, var(--accent), var(--accent-d)); color:#0b1220; border:none}
+  .btn.ghost{background:#0b122000; border:1px dashed #334155}
+  input[type="text"], input[type="password"]{
+    width:100%; padding:12px 14px; border-radius:12px; border:1px solid #334155; outline:none;
+    background:#0b1220; color:var(--text); transition:.2s;
+  }
+  input[type="text"]:focus, input[type="password"]:focus{border-color:var(--accent)}
+  #menu button{margin:6px 6px 0 0}
+  .meta{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:10px 0 8px}
+  .chip{background:var(--chip); border:1px solid #334155; color:var(--muted); padding:6px 10px; border-radius:999px; font-size:12px}
+  .question{ text-align:left; margin:16px 0; padding:16px; border:1px solid #334155; border-radius:14px; background:#0b122066}
+  .option-label{ display:block; margin:8px 0; cursor:pointer; line-height:1.4}
+  .option-label input{ transform:scale(1.2); margin-right:10px; vertical-align:middle}
+  .feedback{ font-weight:700; margin:12px 0}
+  .feedback.ok{ color:var(--ok)}
+  .feedback.bad{ color:var(--bad)}
+  .explain{ margin:8px 0; padding:10px; background:#0b1220; border-left:4px solid #64748b; border-radius:10px}
+  progress{ width:100%; height:14px; border:none; background:#0b1220; border-radius:999px; overflow:hidden}
+  progress::-webkit-progress-bar{ background:#0b1220}
+  progress::-webkit-progress-value{ background:linear-gradient(90deg, var(--accent), #a78bfa)}
+  #score{font-weight:800} #deltaTag{font-weight:900; margin-left:8px}
+  img{ max-width:100%; margin:10px 0; border:2px solid #334155; border-radius:12px}
+  .overlay{ position:fixed; inset:0; background:#00000080; display:none; align-items:center; justify-content:center; z-index:40}
+  .modal{ width:min(720px, 92vw); background:#0b1220; border:1px solid #334155; border-radius:16px; padding:18px; box-shadow:0 20px 40px #00000099}
+  .modal h3{margin-bottom:8px} .modal .body{ max-height:52vh; overflow:auto} .modal .actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:14px}
+  #trialBanner{margin-top:8px} .trial{ padding:10px; border-radius:12px; border:1px solid #334155; background:#0b1220; color:#e2e8f0; display:none}
+  .trial strong{ color:var(--accent)} .hint{font-size:12px; color:var(--muted)}
+</style>
 </head>
 <body>
   <div class="card">
     <div id="topNote">PMC Quiz • Secure Mode (Per-Account Password)</div>
 
-    <!-- 1. Welcome & Login -->
+    <!-- 1) 登录（包在 form 里，防警告） -->
     <div id="welcome">
       <h2>Sign in</h2>
       <p class="hint">每个账号都有自己的密码；或使用 <code>testing</code> 开启 5 分钟试用。</p>
-      <div class="row" style="gap:12px; flex-wrap:wrap">
-        <div style="flex:1 1 220px">
-          <label class="hint">Name</label>
-          <input type="text" id="username" placeholder="Your name"/>
+      <form id="loginForm" autocomplete="on" onsubmit="return false;">
+        <div class="row" style="gap:12px; flex-wrap:wrap">
+          <div style="flex:1 1 220px">
+            <label class="hint">Name</label>
+            <input type="text" id="username" placeholder="Your name" autocomplete="username"/>
+          </div>
+          <div style="flex:1 1 220px">
+            <label class="hint">Password</label>
+            <input type="password" id="accessCode" placeholder="Account password" autocomplete="current-password"/>
+          </div>
         </div>
-        <div style="flex:1 1 220px">
-          <label class="hint">Password</label>
-          <input type="password" id="accessCode" placeholder="Account password"/>
+        <div id="trialBanner" class="trial"></div>
+        <div class="row" style="margin-top:10px">
+          <button id="startBtn" class="btn accent" type="submit">Start Quiz</button>
+          <button id="clearBtn" class="btn ghost" type="button">Clear Saved Session</button>
         </div>
-      </div>
-      <div id="trialBanner" class="trial"></div>
-      <div class="row" style="margin-top:10px">
-        <button id="startBtn" class="btn accent" type="button">Start Quiz</button>
-        <button id="clearBtn" class="btn ghost" type="button">Clear Saved Session</button>
-      </div>
+      </form>
     </div>
 
-    <!-- 2. Chapter selection -->
+    <!-- 2) 章节 -->
     <div id="menu">
       <h2>Select Chapter</h2>
       <div id="chapters"></div>
     </div>
 
-    <!-- 3. Quiz area -->
+    <!-- 3) 测验 -->
     <div id="quiz">
       <div class="meta">
         <span class="chip" id="userChip">User</span>
@@ -100,7 +105,7 @@
       <div id="question-area"></div>
     </div>
 
-    <!-- 4. Section finished -->
+    <!-- 4) 完成 -->
     <div id="finish">
       <h3 id="finish-msg"></h3>
       <p id="stats"></p>
@@ -108,7 +113,7 @@
     </div>
   </div>
 
-  <!-- Explanation Modal -->
+  <!-- 解释弹窗 -->
   <div id="overlay" class="overlay">
     <div class="modal">
       <h3 id="modalTitle">Explanation</h3>
@@ -129,20 +134,21 @@
   </form>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-  // ====== Config ======
+(function(){
+  'use strict';
+
+  /* ===== 基本配置 ===== */
   const TRIAL_CODE = 'testing';
   const TRIAL_MINUTES = 5;
 
-  // LocalStorage keys
   const LS_SESSION = 'pmc_session_until';
   const LS_TRIAL   = 'pmc_trial_until';
   const LS_NAME    = 'pmc_user_name';
   const LS_ROLE    = 'pmc_user_role';
 
-  // ====== State ======
+  /* ===== 状态 ===== */
   let user = '', role = '';
-  let accounts = null; // loaded from password.csv
+  let accounts = null; // 从 password.csv 加载
   let chapters = [], grouped = {};
   let chapterKey, sectionKey, labelKey, sheetKey;
   let currentChapter = '', sectionList = [], secIndex = 0;
@@ -151,39 +157,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const MAX_OPTS = 15;
 
-  // ====== UI refs ======
-  const elWelcome   = document.getElementById('welcome');
-  const elMenu      = document.getElementById('menu');
-  const elChapters  = document.getElementById('chapters');
-  const elQuiz      = document.getElementById('quiz');
-  const elFinish    = document.getElementById('finish');
-  const elQuestionA = document.getElementById('question-area');
-  const elProgress  = document.getElementById('progress');
-  const elScore     = document.getElementById('score');
-  const elDelta     = document.getElementById('deltaTag');
-  const elRemain    = document.getElementById('remaining');
-  const elTitle     = document.getElementById('quiz-title');
-  const elUserChip  = document.getElementById('userChip');
-  const elRoleChip  = document.getElementById('roleChip');
-  const elTimerChip = document.getElementById('timerChip');
-  const elTrial     = document.getElementById('trialBanner');
-  const overlay     = document.getElementById('overlay');
-  const modalTitle  = document.getElementById('modalTitle');
-  const modalBody   = document.getElementById('modalBody');
-  const modalNext   = document.getElementById('modalNext');
+  /* ===== DOM 引用 ===== */
+  const $ = (id)=>document.getElementById(id);
+  const elWelcome   = $('welcome');
+  const elMenu      = $('menu');
+  const elChapters  = $('chapters');
+  const elQuiz      = $('quiz');
+  const elFinish    = $('finish');
+  const elQuestionA = $('question-area');
+  const elProgress  = $('progress');
+  const elScore     = $('score');
+  const elDelta     = $('deltaTag');
+  const elRemain    = $('remaining');
+  const elTitle     = $('quiz-title');
+  const elUserChip  = $('userChip');
+  const elRoleChip  = $('roleChip');
+  const elTimerChip = $('timerChip');
+  const elTrial     = $('trialBanner');
+  const overlay     = $('overlay');
+  const modalTitle  = $('modalTitle');
+  const modalBody   = $('modalBody');
+  const modalNext   = $('modalNext');
 
-  // ====== Utils ======
-  function now(){ return Date.now(); }
-  function fmt(ms){ let s=Math.max(0,Math.floor(ms/1000)); const m=Math.floor(s/60); s%=60; return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; }
-  function readUntil(key){ const raw=localStorage.getItem(key); return raw?parseInt(raw,10):0; }
-  function writeUntil(key,ts){ if(ts) localStorage.setItem(key,String(ts)); else localStorage.removeItem(key); }
+  /* ===== 工具 ===== */
+  const now = ()=> Date.now();
+  const fmt = (ms)=>{ let s=Math.max(0,Math.floor(ms/1000)); const m=Math.floor(s/60); s%=60; return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; };
+  const readUntil = (k)=>{ const raw=localStorage.getItem(k); return raw?parseInt(raw,10):0; };
+  const writeUntil= (k,ts)=>{ if(ts){ localStorage.setItem(k,String(ts)); } else { localStorage.removeItem(k); } };
+  const shuffle = (arr)=>{ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; };
+
   function startTicker(){
     stopTicker();
     timerTick=setInterval(()=>{
-      const elapsed = now()-chapterStart;
+      const elapsed=now()-chapterStart;
       elTimerChip.textContent = fmt(elapsed);
       if(isTrial){
-        const left = sessionUntil - now();
+        const left=sessionUntil-now();
         if(left<=0){ alert('Trial expired. Returning to sign in.'); endSession(); }
         else{ elTrial.style.display='block'; elTrial.innerHTML=`试用模式：剩余 <strong>${fmt(left)}</strong>`; }
       }
@@ -198,150 +207,141 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   function gateKeep(){
     sessionUntil = readUntil(LS_SESSION);
-    const t = now();
-    if(sessionUntil>t){
+    if(sessionUntil>now()){
       isTrial = (readUntil(LS_TRIAL)===sessionUntil);
       const savedName=localStorage.getItem(LS_NAME)||''; const savedRole=localStorage.getItem(LS_ROLE)||'';
-      if(savedName) document.getElementById('username').value=savedName;
+      if(savedName) $('username').value=savedName;
       if(savedRole){ role=savedRole; elRoleChip.textContent=`Role: ${role}`; elRoleChip.style.display='inline-flex'; }
       elTrial.style.display = isTrial?'block':'none';
-    }else{ endSession(); }
+    } else {
+      endSession();
+    }
   }
   gateKeep();
 
-  // ====== Accounts loader ======
-  function normalizeKeyMap(row){
-    const map={};
-    Object.keys(row).forEach(k=>{
-      const nk = String(k||'').trim().toLowerCase();
-      map[nk]=k;
-    });
-    return map;
+  /* ===== 账号加载 & 校验 ===== */
+  function normalizeKeys(row){
+    const map={}; Object.keys(row).forEach(k=>{ map[String(k||'').trim().toLowerCase()] = k; }); return map;
   }
-  function getField(row, map, keys){
-    for(const key of keys){
-      if(map[key]!==undefined){
-        const v=row[map[key]];
-        if(v!==undefined && v!==null && String(v).trim()!=='') return String(v).trim();
-      }
-    }
+  function field(row,map,keys){
+    for(const k of keys){ if(map[k]!=null){ const v=row[map[k]]; if(v!=null && String(v).trim()!=='') return String(v).trim(); } }
     return '';
   }
   function loadAccounts(cb){
     if(accounts){ cb(); return; }
-    Papa.parse('password.csv',{download:true,header:true,skipEmptyLines:true,complete(res){
-      accounts = res.data.map(r=>{
-        const m = normalizeKeyMap(r);
-        return {
-          name: getField(r,m,['name','account','user']),
-          password: getField(r,m,['password','pass']),
-          role: getField(r,m,['role']),
-          active: getField(r,m,['active']) || '1'
-        };
-      }).filter(x=>x.name && x.password);
-      cb();
-    }});
+    Papa.parse('password.csv',{download:true,header:true,skipEmptyLines:true,complete:(res)=>{
+      try{
+        accounts = res.data.map(r=>{
+          const m=normalizeKeys(r);
+          return {
+            name: field(r,m,['name','account','user']),
+            password: field(r,m,['password','pass']),
+            role: field(r,m,['role']),
+            active: field(r,m,['active'])||'1'
+          };
+        }).filter(x=>x.name && x.password);
+        if(!accounts.length){ console.error('[password.csv] 空表或缺列'); alert('password.csv 为空或缺少 name/password 列'); }
+        cb();
+      }catch(e){
+        console.error('解析 password.csv 出错：', e);
+        alert('无法读取 password.csv，请检查表头与内容'); 
+      }
+    }, error:(e)=>{ console.error('加载 password.csv 出错：', e); alert('找不到 password.csv 或无法读取'); }});
   }
-  function findAccountByName(name){
-    const lower = name.toLowerCase();
-    // 优先完全匹配，不分大小写
-    let acc = accounts.find(a=>a.name.toLowerCase()===lower);
-    if(acc) return acc;
-    // 次选：去除前后空格再比较（已做），不再做模糊匹配以避免误判
-    return null;
+  function findAccountByName(nm){
+    const lower=nm.toLowerCase();
+    return accounts.find(a=>a.name.toLowerCase()===lower)||null;
   }
 
-  // ====== Buttons ======
-  document.getElementById('clearBtn').onclick = ()=>{
-    endSession(); document.getElementById('username').value=''; document.getElementById('accessCode').value='';
+  /* ===== 登录按钮 ===== */
+  $('clearBtn').onclick = ()=>{
+    endSession();
+    $('username').value=''; $('accessCode').value='';
     localStorage.removeItem(LS_NAME); localStorage.removeItem(LS_ROLE);
   };
 
-  document.getElementById('startBtn').onclick = ()=>{
-    const nm = document.getElementById('username').value.trim();
-    const pwd = document.getElementById('accessCode').value.trim();
-    if(!nm) return alert('Please enter your name');
-    if(!pwd) return alert('Password is required');
+  $('loginForm').addEventListener('submit', function(){
+    const nm = $('username').value.trim();
+    const pwd = $('accessCode').value.trim();
+    if(!nm){ alert('Please enter your name'); return; }
+    if(!pwd){ alert('Password is required'); return; }
 
-    // Trial path（任何名字 + testing）
+    // 试用
     if(pwd===TRIAL_CODE){
-      const nowTs=now();
-      user = nm; role = 'Trial';
-      sessionUntil = nowTs + TRIAL_MINUTES*60*1000;
-      isTrial=true; writeUntil(LS_SESSION,sessionUntil); writeUntil(LS_TRIAL,sessionUntil);
+      const ts=now();
+      user=nm; role='Trial';
+      sessionUntil=ts+TRIAL_MINUTES*60*1000; isTrial=true;
+      writeUntil(LS_SESSION,sessionUntil); writeUntil(LS_TRIAL,sessionUntil);
       localStorage.setItem(LS_NAME,user); localStorage.setItem(LS_ROLE,role);
       elUserChip.textContent=`User: ${user}`; elRoleChip.textContent=`Role: ${role}`; elRoleChip.style.display='inline-flex';
       elWelcome.style.display='none'; loadChapters(); startTicker(); return;
     }
 
-    // Account path（读取 password.csv）
+    // 正式账号
     loadAccounts(()=>{
-      const acc = findAccountByName(nm);
-      if(!acc) return alert('Account not found');
-      if(String(acc.active).trim()==='0') return alert('This account is disabled');
-      if(pwd!==acc.password) return alert('Invalid password');
+      const acc=findAccountByName(nm);
+      if(!acc){ alert('Account not found'); return; }
+      if(String(acc.active).trim()==='0'){ alert('This account is disabled'); return; }
+      if(pwd!==acc.password){ alert('Invalid password'); return; }
 
-      // 登录通过
-      const nowTs=now();
-      user = acc.name; role = acc.role || 'User';
-      // 正式账号默认 24h 会话（可改分钟数）
-      sessionUntil = nowTs + 24*60*60*1000;
-      isTrial=false; writeUntil(LS_SESSION,sessionUntil); writeUntil(LS_TRIAL,0);
+      const ts=now();
+      user=acc.name; role=acc.role||'User';
+      sessionUntil=ts+24*60*60*1000; isTrial=false;
+      writeUntil(LS_SESSION,sessionUntil); writeUntil(LS_TRIAL,0);
       localStorage.setItem(LS_NAME,user); localStorage.setItem(LS_ROLE,role);
       elUserChip.textContent=`User: ${user}`;
-      if(role){ elRoleChip.textContent=`Role: ${role}`; elRoleChip.style.display='inline-flex'; }
-      else{ elRoleChip.style.display='none'; }
+      if(role){ elRoleChip.textContent=`Role: ${role}`; elRoleChip.style.display='inline-flex'; } else { elRoleChip.style.display='none'; }
       elWelcome.style.display='none'; loadChapters(); startTicker();
     });
   });
 
-  // ====== Chapters ======
+  /* ===== 章节/出题 ===== */
   function loadChapters(){
-    if(now()>=sessionUntil) return endSession();
-    Papa.parse('Chapters.csv',{download:true,header:true,skipEmptyLines:true,complete(res){
-      chapters = res.data.map(raw=>{
-        const r={}; Object.entries(raw).forEach(([k,v])=>{ r[k.trim()]= typeof v==='string'? v.trim(): v; }); return r;
-      });
-      if(!chapters.length) return alert('Check Chapters.csv file');
-      const keys = Object.keys(chapters[0]);
+    if(now()>=sessionUntil){ endSession(); return; }
+    Papa.parse('Chapters.csv',{download:true,header:true,skipEmptyLines:true,complete:(res)=>{
+      chapters = res.data.map(raw=>{ const r={}; Object.entries(raw).forEach(([k,v])=>{ r[k.trim()]= typeof v==='string'? v.trim(): v; }); return r; });
+      if(!chapters.length){ alert('Check Chapters.csv file'); return; }
+      const keys=Object.keys(chapters[0]);
       chapterKey = keys.find(k=>k.toLowerCase()==='chapter');
       sectionKey = keys.find(k=>k.toLowerCase()==='section');
       labelKey   = keys.find(k=>k.toLowerCase()==='label');
       sheetKey   = keys.find(k=>k.toLowerCase()==='sheet');
-      if(!chapterKey||!sectionKey||!labelKey||!sheetKey) return alert('Chapters.csv requires: chapter, section, label, sheet');
+      if(!chapterKey||!sectionKey||!labelKey||!sheetKey){ alert('Chapters.csv requires: chapter, section, label, sheet'); return; }
 
-      grouped = {}; chapters.forEach(r=>{ const c=r[chapterKey]; (grouped[c]||(grouped[c]=[])).push(r); });
+      grouped={}; chapters.forEach(r=>{ const c=r[chapterKey]; (grouped[c]||(grouped[c]=[])).push(r); });
+
       elMenu.style.display='block'; elChapters.innerHTML='';
       Object.keys(grouped).forEach(chap=>{
         const btn=document.createElement('button'); btn.className='btn'; btn.textContent=chap; btn.onclick=()=>startChapter(chap); elChapters.appendChild(btn);
       });
-    }});
+    }, error:(e)=>{ console.error('加载 Chapters.csv 出错：', e); alert('无法读取 Chapters.csv'); }});
   }
 
   function startChapter(chap){
-    if(now()>=sessionUntil) return endSession();
+    if(now()>=sessionUntil){ endSession(); return; }
     currentChapter=chap;
     sectionList = grouped[chap].sort((a,b)=> a[sectionKey].localeCompare(b[sectionKey],undefined,{numeric:true}));
     secIndex=0; elMenu.style.display='none'; loadSection();
   }
 
   function loadSection(){
-    if(now()>=sessionUntil) return endSession();
-    const sec = sectionList[secIndex];
+    if(now()>=sessionUntil){ endSession(); return; }
+    const sec=sectionList[secIndex];
     elTitle.textContent = `${currentChapter} – ${sec[sectionKey]}: ${sec[labelKey]}`;
     score=correct=wrong=0; chapterStart=now();
-    Papa.parse(sec[sheetKey],{download:true,header:true,skipEmptyLines:true,complete(r){
+    Papa.parse(sec[sheetKey],{download:true,header:true,skipEmptyLines:true,complete:(r)=>{
       qs = r.data.map(q=>({...q,attempt:0}));
       queue = shuffle([...qs]);
       elQuiz.style.display='block'; elFinish.style.display='none';
       updateUI(0); nextQ();
-    }});
+    }, error:(e)=>{ console.error('加载题库出错：', e); alert('无法读取题库 CSV'); }});
   }
 
   function updateUI(delta){
     if(delta===0){ elDelta.textContent=''; elDelta.style.color='inherit'; }
     else{ elDelta.textContent=(delta>0?`+${delta}`:`${delta}`); elDelta.style.color=delta>0?'var(--ok)':'var(--bad)'; }
-    elScore.firstChild.textContent=`Score: ${score} `;
+    // 写到第一个文本节点（兼容性好）
+    elScore.childNodes[0].nodeValue = `Score: ${score} `;
     elRemain.textContent=`Remaining: ${queue.length}`;
     elProgress.max=qs.length; elProgress.value=qs.length-queue.length;
   }
@@ -351,49 +351,50 @@ document.addEventListener('DOMContentLoaded', () => {
     for(const k of keys){ if(q[k] && String(q[k]).trim()) return String(q[k]).trim(); }
     return '';
   }
-  function letterList(){ return Array.from({length:MAX_OPTS},(_,i)=>String.fromCharCode(65+i)); }
+
+  function letters(){ return Array.from({length:MAX_OPTS},(_,i)=>String.fromCharCode(65+i)); }
 
   function nextQ(){
-    if(now()>=sessionUntil) return endSession();
+    if(now()>=sessionUntil){ endSession(); return; }
     elQuestionA.innerHTML=''; updateUI(0);
-    if(queue.length===0) return finishSection();
+    if(queue.length===0){ finishSection(); return; }
 
     const q = queue.shift();
-    const div=document.createElement('div'); div.className='question';
-    const safeQ = (q.question||'').replace(/\r?\n/g,'<br/>');
-    div.innerHTML = `<p><strong>${safeQ}</strong></p>`;
+    const wrap=document.createElement('div'); wrap.className='question';
+    const safeQ = String(q.question||'').replace(/\r?\n/g,'<br/>');
+    wrap.innerHTML = `<p><strong>${safeQ}</strong></p>`;
 
     if(q.image){
-      const img=document.createElement('img'); img.src=String(q.image).replace(/\s*\//g,'/').trim(); img.alt='question image'; div.appendChild(img);
+      const img=document.createElement('img'); img.src=String(q.image).replace(/\s*\//g,'/').trim(); img.alt='question image'; wrap.appendChild(img);
     }
 
     const opts=document.createElement('div'); opts.className='options';
     if(q.type==='text'){
       opts.innerHTML='<input type="text" id="txtAns" placeholder="Type your answer…"/>';
     }else{
-      const letters=letterList().filter(l=>q[l]&&String(q[l]).trim());
-      shuffle(letters).forEach(l=>{
+      const ls=letters().filter(l=>q[l]&&String(q[l]).trim());
+      shuffle(ls).forEach(l=>{
         const id='opt_'+l+'_'+Math.random().toString(16).slice(2,6);
-        const inp=document.createElement('input'); inp.type=q.type==='checkbox'?'checkbox':'radio'; inp.name='opt'; inp.value=l; inp.id=id;
+        const inp=document.createElement('input'); inp.type=(q.type==='checkbox'?'checkbox':'radio'); inp.name='opt'; inp.value=l; inp.id=id;
         const lbl=document.createElement('label'); lbl.className='option-label'; lbl.htmlFor=id; lbl.appendChild(inp);
-        let raw=q[l]; if(typeof raw==='string' && /^-?\d+\.0$/.test(raw)) raw=String(parseInt(raw));
+        let raw=q[l]; if(typeof raw==='string' && /^-?\d+\.0$/.test(raw)) raw=String(parseInt(raw,10));
         lbl.append(' '+raw); opts.appendChild(lbl);
       });
     }
-    div.appendChild(opts);
+    wrap.appendChild(opts);
 
-    const fb=document.createElement('div'); fb.className='feedback'; div.appendChild(fb);
+    const fb=document.createElement('div'); fb.className='feedback'; wrap.appendChild(fb);
 
     const sb=document.createElement('button'); sb.className='btn accent'; sb.textContent='Submit';
     sb.onclick=()=>{
-      if(now()>=sessionUntil) return endSession();
+      if(now()>=sessionUntil){ endSession(); return; }
       let ua=[];
       if(q.type==='text'){
-        ua=document.getElementById('txtAns').value.split(',').map(s=>s.trim()).filter(s=>s);
+        ua=$('txtAns').value.split(',').map(s=>s.trim()).filter(Boolean);
       }else{
-        ua=Array.from(div.querySelectorAll('input[name="opt"]:checked')).map(i=>i.value);
+        ua=Array.from(wrap.querySelectorAll('input[name="opt"]:checked')).map(i=>i.value);
       }
-      if(!ua.length) return alert('Please select or enter an answer');
+      if(!ua.length){ alert('Please select or enter an answer'); return; }
 
       let isC=false;
       if(q.type==='text'){
@@ -409,7 +410,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const delta=isC?(q.attempt?1:2):(q.attempt?-2:-1);
       score+=delta; if(isC) correct++; else wrong++;
 
-      sb.disabled=true; Array.from(div.querySelectorAll('input')).forEach(i=>i.disabled=true);
+      sb.disabled=true; Array.from(wrap.querySelectorAll('input')).forEach(i=>i.disabled=true);
       fb.className='feedback '+(isC?'ok':'bad');
       let ansTxt='';
       if(!isC){
@@ -422,29 +423,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if(!isC){ q.attempt++; for(let i=0;i<2;i++){ queue.splice(Math.floor(Math.random()*(queue.length+1)),0,{...q}); } }
 
-      // Explanation modal (always)
+      // 解释弹窗（总是显示）
       const exp=getExplain(q);
       modalTitle.textContent=isC?'Explanation (Correct)':'Explanation (Review)';
-      modalBody.innerHTML = exp ? `<div class="explain">${exp.replace(/\r?\n/g,'<br/>')}</div>` : `<div class="explain"><em>No explanation provided for this item.</em></div>`;
+      modalBody.innerHTML = exp ? `<div class="explain">${exp.replace(/\r?\n/g,'<br/>')}</div>`
+                                : `<div class="explain"><em>No explanation provided for this item.</em></div>`;
       overlay.style.display='flex';
       const goNext=()=>{ overlay.style.display='none'; nextQ(); };
-      modalNext.onclick=goNext; overlay.onclick=(e)=>{ if(e.target===overlay) goNext(); };
+      modalNext.onclick=goNext;
+      overlay.onclick=(e)=>{ if(e.target===overlay) goNext(); };
     };
-    div.appendChild(sb);
-    elQuestionA.appendChild(div);
+    wrap.appendChild(sb);
+    elQuestionA.appendChild(wrap);
   }
 
   function finishSection(){
-    if(now()>=sessionUntil) return endSession();
+    if(now()>=sessionUntil){ endSession(); return; }
     elQuiz.style.display='none'; elFinish.style.display='block';
-    document.getElementById('finish-msg').textContent=`Well done, ${user}! You have completed this chapter.`;
-    document.getElementById('stats').textContent=`Score: ${score}, Correct: ${correct}, Wrong: ${wrong}`;
-    const form=document.getElementById('postForm');
+    $('finish-msg').textContent=`Well done, ${user}! You have completed this chapter.`;
+    $('stats').textContent=`Score: ${score}, Correct: ${correct}, Wrong: ${wrong}`;
+    const form=$('postForm');
     form.quizId.value=currentChapter+'_'+sectionList[secIndex][sectionKey];
     form.name.value=user; form.score.value=score; form.correct.value=correct; form.wrong.value=wrong;
     form.time.value=Math.floor((now()-chapterStart)/1000); form.submit();
 
-    const ctrl=document.getElementById('controls'); ctrl.innerHTML='';
+    const ctrl=$('controls'); ctrl.innerHTML='';
     const btn=document.createElement('button'); btn.className='btn accent';
     btn.textContent = secIndex < sectionList.length-1 ? 'Next Section' : 'Back to Chapters';
     btn.onclick=()=>{ elFinish.style.display='none'; if(secIndex < sectionList.length-1){ secIndex++; loadSection(); } else { elMenu.style.display='block'; } };
@@ -452,8 +455,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const backBtn=document.createElement('button'); backBtn.className='btn'; backBtn.textContent='Exit'; backBtn.onclick=endSession; ctrl.appendChild(backBtn);
   }
 
-  function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
-});
+})();
 </script>
 </body>
 </html>
