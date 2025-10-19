@@ -7,70 +7,78 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 <style>
   :root{
-    --bg:#0f172a; --card:#111827ee; --accent:#22d3ee; --accent-d:#06b6d4;
-    --ok:#22c55e; --bad:#ef4444; --muted:#9ca3af; --text:#e5e7eb; --chip:#1f2937;
+    /* 浅色主题主色 */
+    --bg:#f6f7fb; --card:#ffffff; --border:#d9dee7; --muted:#64748b; --text:#0f172a;
+    --accent:#0ea5e9; --accent-d:#0284c7;
+    --ok:#16a34a; --bad:#ef4444; --chip:#f1f5f9;
   }
   *{box-sizing:border-box}
   body{
     margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "PingFang SC", "Microsoft YaHei", sans-serif;
     color:var(--text); background:
-      radial-gradient(800px 400px at 10% -10%, #22d3ee33, transparent 60%),
-      radial-gradient(800px 400px at 110% 10%, #f472b633, transparent 60%),
-      linear-gradient(180deg, #0b1220, #0f172a 50%, #0b1220 100%);
-    min-height:100vh; display:flex; align-items:flex-start; justify-content:center; padding:28px 16px;
+      radial-gradient(900px 280px at -10% -20%, #38bdf833, transparent 60%),
+      radial-gradient(900px 280px at 110% -10%, #a78bfa33, transparent 60%),
+      linear-gradient(180deg, #f8fafc, var(--bg) 40%, #eef2f7 100%);
+    min-height:100vh; display:flex; align-items:flex-start; justify-content:center; padding:28px 12px;
   }
-  .card{width:100%; max-width:980px; background:var(--card); border:1px solid #334155; border-radius:18px; padding:20px; backdrop-filter: blur(6px); box-shadow: 0 20px 40px #00000066;}
+  .card{width:100%; max-width:980px; background:var(--card); border:1px solid var(--border); border-radius:16px; padding:18px; box-shadow: 0 10px 30px #0b12200f;}
   h1,h2,h3{margin:0 0 10px}
-  #topNote{font-size:14px; color:var(--muted); margin-bottom:6px}
+  #topNote{font-size:13px; color:var(--muted); margin-bottom:6px}
   #welcome,#menu,#quiz,#finish,#history{margin:6px 0}
   #menu,#quiz,#finish,#history{display:none}
+
   .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
-  .btn{padding:10px 14px; border:1px solid #334155; border-radius:12px; background:linear-gradient(180deg, #1f2937, #111827); color:var(--text); cursor:pointer; transition:.2s; font-weight:600;}
-  .btn:hover{transform:translateY(-1px); box-shadow:0 6px 16px #00000066; border-color:#3b82f6}
-  .btn.accent{background:linear-gradient(180deg, var(--accent), var(--accent-d)); color:#0b1220; border:none}
-  .btn.ghost{background:#0b122000; border:1px dashed #334155}
+  .btn{
+    padding:10px 14px; border:1px solid var(--border); border-radius:12px;
+    background:#f8fafc; color:var(--text); cursor:pointer; transition:.15s; font-weight:600;
+  }
+  .btn:hover{transform:translateY(-1px); box-shadow:0 6px 16px #00000010; border-color:#cbd5e1}
+  .btn.accent{background:linear-gradient(180deg, var(--accent), var(--accent-d)); color:#fff; border:none}
+  .btn.ghost{background:transparent; border:1px dashed var(--border); color:var(--muted)}
   input[type="text"], input[type="password"]{
-    width:100%; padding:12px 14px; border-radius:12px; border:1px solid #334155; outline:none;
-    background:#0b1220; color:var(--text); transition:.2s;
+    width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--border); outline:none;
+    background:#fff; color:var(--text); transition:.15s;
   }
   input[type="text"]:focus, input[type="password"]:focus{border-color:var(--accent)}
   #menu button{margin:6px 6px 0 0}
-  .meta{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:10px 0 8px}
-  .chip{background:var(--chip); border:1px solid #334155; color:var(--muted); padding:6px 10px; border-radius:999px; font-size:12px}
-  .tabs{display:flex; gap:8px; margin:8px 0 14px}
-  .tab{padding:8px 12px; border:1px solid #334155; border-radius:999px; cursor:pointer; color:var(--muted)}
-  .tab.active{color:#0b1220; background:linear-gradient(180deg, var(--accent), var(--accent-d)); border:none}
+  .meta{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:8px 0}
+  .chip{background:var(--chip); border:1px solid var(--border); color:var(--muted); padding:6px 10px; border-radius:999px; font-size:12px}
 
-  .question{ text-align:left; margin:16px 0; padding:16px; border:1px solid #334155; border-radius:14px; background:#0b122066}
-  .option-label{ display:block; margin:8px 0; cursor:pointer; line-height:1.4}
-  .option-label input{ transform:scale(1.2); margin-right:10px; vertical-align:middle}
-  .feedback{ font-weight:700; margin:12px 0}
+  /* 顶部标签 */
+  .tabs{display:flex; gap:8px; margin:8px 0 14px}
+  .tab{padding:8px 12px; border:1px solid var(--border); border-radius:999px; cursor:pointer; color:var(--muted); background:#fff}
+  .tab.active{color:#fff; background:linear-gradient(180deg, var(--accent), var(--accent-d)); border:none}
+
+  /* 题卡 & 解释（内联显示，不遮挡） */
+  .question{ text-align:left; margin:16px 0; padding:16px; border:1px solid var(--border); border-radius:14px; background:#fff}
+  .option-label{ display:block; margin:8px 0; cursor:pointer; line-height:1.45}
+  .option-label input{ transform:scale(1.15); margin-right:10px; vertical-align:middle}
+  .feedback{ font-weight:700; margin:10px 0 6px}
   .feedback.ok{ color:var(--ok)}
   .feedback.bad{ color:var(--bad)}
-  .explain{ margin:8px 0; padding:10px; background:#0b1220; border-left:4px solid #64748b; border-radius:10px}
-  progress{ width:100%; height:14px; border:none; background:#0b1220; border-radius:999px; overflow:hidden}
-  progress::-webkit-progress-bar{ background:#0b1220}
+  .explain{ margin:8px 0; padding:10px 12px; background:#f8fafc; border:1px solid var(--border); border-radius:10px}
+  .ansline{ font-size:13px; color:var(--muted); margin-top:6px}
+
+  progress{ width:100%; height:14px; border:none; background:#eef2f7; border-radius:999px; overflow:hidden}
+  progress::-webkit-progress-bar{ background:#eef2f7}
   progress::-webkit-progress-value{ background:linear-gradient(90deg, var(--accent), #a78bfa)}
   #score{font-weight:800} #deltaTag{font-weight:900; margin-left:8px}
-  img{ max-width:100%; margin:10px 0; border:2px solid #334155; border-radius:12px}
+  img{ max-width:100%; margin:10px 0; border:1px solid var(--border); border-radius:12px}
 
-  .overlay{ position:fixed; inset:0; background:#00000080; display:none; align-items:center; justify-content:center; z-index:40}
-  .modal{ width:min(720px, 92vw); background:#0b1220; border:1px solid #334155; border-radius:16px; padding:18px; box-shadow:0 20px 40px #00000099}
-  .modal h3{margin-bottom:8px} .modal .body{ max-height:52vh; overflow:auto} .modal .actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:14px}
-  #trialBanner{margin-top:8px} .trial{ padding:10px; border-radius:12px; border:1px solid #334155; background:#0b1220; color:#e2e8f0; display:none}
+  #trialBanner{margin-top:8px} .trial{ padding:10px; border-radius:12px; border:1px solid var(--border); background:#fff; color:#0b1220; display:none}
   .trial strong{ color:var(--accent)} .hint{font-size:12px; color:var(--muted)}
 
-  /* History table */
+  /* 历史表 */
   table{width:100%; border-collapse:collapse; font-size:14px}
-  th,td{border-bottom:1px solid #334155; padding:8px 6px; text-align:left}
-  th{color:#cbd5e1}
+  th,td{border-bottom:1px solid var(--border); padding:8px 6px; text-align:left}
+  th{color:#334155; background:#f8fafc}
   .num{text-align:right}
   .muted{color:var(--muted)}
 </style>
 </head>
 <body>
   <div class="card">
-    <div id="topNote">PMC Quiz • Secure Mode (Per-Account Password) • With History</div>
+    <div id="topNote">PMC Quiz • Per-Account Password • Inline Explanations • History</div>
 
     <!-- 顶部标签 -->
     <div class="tabs">
@@ -79,7 +87,7 @@
       <div id="tabHistory" class="tab" style="display:none">History</div>
     </div>
 
-    <!-- 1) 登录 -->
+    <!-- 1) 登录（包 form，避免浏览器警告） -->
     <div id="welcome">
       <h2>Sign in</h2>
       <p class="hint">每个账号都有自己的密码；或使用 <code>testing</code> 开启 5 分钟试用。</p>
@@ -106,7 +114,6 @@
     <div id="menu">
       <div class="meta">
         <span class="chip" id="userChip">User</span>
-        <span class="chip" id="roleChip" style="display:none"></span>
         <span class="chip" id="timerChip">00:00</span>
       </div>
       <h2>Select Chapter</h2>
@@ -146,7 +153,7 @@
       </div>
       <p class="hint" id="historyHint">自动从 Google Sheet 读取你的历史成绩（最近 50 条）。</p>
       <div class="row" id="summaryRow" style="gap:8px; margin:8px 0"></div>
-      <div style="overflow:auto; max-height:50vh; border:1px solid #334155; border-radius:12px; padding:8px;">
+      <div style="overflow:auto; max-height:50vh; border:1px solid var(--border); border-radius:12px; padding:8px;">
         <table id="historyTable">
           <thead>
             <tr>
@@ -165,17 +172,6 @@
     </div>
   </div>
 
-  <!-- 解释弹窗 -->
-  <div id="overlay" class="overlay">
-    <div class="modal">
-      <h3 id="modalTitle">Explanation</h3>
-      <div id="modalBody" class="body"></div>
-      <div class="actions">
-        <button id="modalNext" class="btn accent">Next Question</button>
-      </div>
-    </div>
-  </div>
-
   <!-- 提交到 GAS -->
   <iframe name="postFrame" style="display:none;"></iframe>
   <form id="postForm"
@@ -189,27 +185,27 @@
 (function(){
   'use strict';
 
-  /* ===== 配置：历史成绩数据源 =====
-     任选其一填入即可（都填则优先使用 PRIMARY，失败再用 FALLBACK）
-     - HISTORY_PRIMARY_URL 例：你的 Apps Script： .../exec?mode=list
-     - HISTORY_FALLBACK_CSV 例：Google Sheet CSV：.../gviz/tq?tqx=out:csv&sheet=Scores
+  /* ====== 历史成绩数据源（填你自己的） ======
+     任一填入即可；两者都填则优先用 PRIMARY，失败再用 FALLBACK
+     例：
+     const HISTORY_PRIMARY_URL  = 'https://script.google.com/.../exec?mode=list';
+     const HISTORY_FALLBACK_CSV = 'https://docs.google.com/spreadsheets/d/<ID>/gviz/tq?tqx=out:csv&sheet=Scores';
   */
-  const HISTORY_PRIMARY_URL  = ''; // ← 可填 Apps Script 列表接口（GET）
-  const HISTORY_FALLBACK_CSV = ''; // ← 可填 Google Sheet CSV 导出链接
+  const HISTORY_PRIMARY_URL  = '';
+  const HISTORY_FALLBACK_CSV = '';
 
-  /* ===== 其他配置 ===== */
+  /* 其他配置 */
   const TRIAL_CODE = 'testing';
   const TRIAL_MINUTES = 5;
-  const HISTORY_LIMIT = 50; // 历史记录条数上限
+  const HISTORY_LIMIT = 50;
 
   const LS_SESSION = 'pmc_session_until';
   const LS_TRIAL   = 'pmc_trial_until';
   const LS_NAME    = 'pmc_user_name';
-  const LS_ROLE    = 'pmc_user_role';
 
-  /* ===== 状态 ===== */
-  let user = '', role = '';
-  let accounts = null;
+  /* 状态 */
+  let user = '';
+  let accounts = null; // password.csv
   let chapters = [], grouped = {};
   let chapterKey, sectionKey, labelKey, sheetKey;
   let currentChapter = '', sectionList = [], secIndex = 0;
@@ -218,18 +214,17 @@
 
   const MAX_OPTS = 15;
 
-  /* ===== DOM ===== */
+  /* DOM */
   const $ = (id)=>document.getElementById(id);
   const elWelcome=$('welcome'), elMenu=$('menu'), elQuiz=$('quiz'), elFinish=$('finish'), elHistory=$('history');
   const elChapters=$('chapters'), elQuestionA=$('question-area'), elProgress=$('progress');
   const elScore=$('score'), elDelta=$('deltaTag'), elRemain=$('remaining'), elTitle=$('quiz-title');
-  const elUserChip=$('userChip'), elUserChip2=$('userChip2'), elRoleChip=$('roleChip');
+  const elUserChip=$('userChip'), elUserChip2=$('userChip2');
   const elTimerChip=$('timerChip'), elTimerChip2=$('timerChip2'), elTrial=$('trialBanner');
-  const overlay=$('overlay'), modalTitle=$('modalTitle'), modalBody=$('modalBody'), modalNext=$('modalNext');
   const tabLogin=$('tabLogin'), tabMenu=$('tabMenu'), tabHistory=$('tabHistory');
   const historyTable=$('historyTable').querySelector('tbody'), summaryRow=$('summaryRow');
 
-  /* ===== Tabs ===== */
+  /* Tabs */
   function setTab(active){
     [tabLogin,tabMenu,tabHistory].forEach(t=>t.classList.remove('active'));
     ['welcome','menu','history'].forEach(id=>$(id).style.display='none');
@@ -238,10 +233,11 @@
     if(active==='history'){ tabHistory.classList.add('active'); elHistory.style.display='block'; }
   }
   tabMenu.onclick = ()=> setTab('menu');
-  tabHistory.onclick = ()=> setTab('history');
+  tabHistory.onclick = ()=> loadHistory(true); // 点击才切换并加载
   $('btnBackChapters').onclick = ()=> setTab('menu');
+  $('btnRefresh').onclick = ()=> loadHistory(true);
 
-  /* ===== 工具 ===== */
+  /* 工具 */
   const now=()=>Date.now();
   const fmtTime=(ms)=>{ let s=Math.max(0,Math.floor(ms/1000)); const m=Math.floor(s/60); s%=60; return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; };
   const readUntil=(k)=>{ const raw=localStorage.getItem(k); return raw?parseInt(raw,10):0; };
@@ -272,9 +268,7 @@
     sessionUntil=readUntil(LS_SESSION);
     if(sessionUntil>now()){
       isTrial=(readUntil(LS_TRIAL)===sessionUntil);
-      const savedName=localStorage.getItem(LS_NAME)||''; const savedRole=localStorage.getItem(LS_ROLE)||'';
-      if(savedName) $('username').value=savedName;
-      if(savedRole){ role=savedRole; elRoleChip.textContent=`Role: ${role}`; elRoleChip.style.display='inline-flex'; }
+      const savedName=localStorage.getItem(LS_NAME)||''; if(savedName) $('username').value=savedName;
       elTrial.style.display=isTrial?'block':'none';
     } else {
       endSession();
@@ -282,7 +276,7 @@
   }
   gateKeep();
 
-  /* ===== 账号 ===== */
+  /* 账号 */
   function normalizeKeys(row){ const map={}; Object.keys(row).forEach(k=>{ map[String(k||'').trim().toLowerCase()]=k; }); return map; }
   function getField(row,map,keys){ for(const k of keys){ if(map[k]!=null){ const v=row[map[k]]; if(v!=null && String(v).trim()!=='') return String(v).trim(); } } return ''; }
 
@@ -294,7 +288,6 @@
         return {
           name:getField(r,m,['name','account','user']),
           password:getField(r,m,['password','pass']),
-          role:getField(r,m,['role']),
           active:getField(r,m,['active'])||'1'
         };
       }).filter(x=>x.name && x.password);
@@ -304,10 +297,10 @@
   }
   const findAccountByName=(nm)=>{ const lower=nm.toLowerCase(); return accounts.find(a=>a.name.toLowerCase()===lower)||null; };
 
-  /* ===== 登录按钮 ===== */
+  /* 登录按钮 */
   $('clearBtn').onclick = ()=>{
     endSession(); $('username').value=''; $('accessCode').value='';
-    localStorage.removeItem(LS_NAME); localStorage.removeItem(LS_ROLE);
+    localStorage.removeItem(LS_NAME);
     setTab('login');
   };
 
@@ -318,13 +311,14 @@
     if(!pwd){ alert('Password is required'); return; }
 
     if(pwd===TRIAL_CODE){
-      const ts=now(); user=nm; role='Trial';
+      const ts=now(); user=nm;
       sessionUntil=ts+TRIAL_MINUTES*60*1000; isTrial=true;
       writeUntil(LS_SESSION,sessionUntil); writeUntil(LS_TRIAL,sessionUntil);
-      localStorage.setItem(LS_NAME,user); localStorage.setItem(LS_ROLE,role);
+      localStorage.setItem(LS_NAME,user);
       elUserChip.textContent=`User: ${user}`; elUserChip2.textContent=`User: ${user}`;
-      elRoleChip.textContent=`Role: ${role}`; elRoleChip.style.display='inline-flex';
-      setTab('menu'); loadChapters(); startTicker(); loadHistory(); tabMenu.style.display='inline-flex'; tabHistory.style.display='inline-flex'; return;
+      setTab('menu'); loadChapters(); startTicker(); loadHistory(false);
+      tabMenu.style.display='inline-flex'; tabHistory.style.display='inline-flex';
+      return;
     }
 
     loadAccounts(()=>{
@@ -332,17 +326,17 @@
       if(!acc){ alert('Account not found'); return; }
       if(String(acc.active).trim()==='0'){ alert('This account is disabled'); return; }
       if(pwd!==acc.password){ alert('Invalid password'); return; }
-      const ts=now(); user=acc.name; role=acc.role||'User';
-      sessionUntil=ts+24*60*60*1000; isTrial=false;
+      const ts=now(); user=acc.name; isTrial=false;
+      sessionUntil=ts+24*60*60*1000;
       writeUntil(LS_SESSION,sessionUntil); writeUntil(LS_TRIAL,0);
-      localStorage.setItem(LS_NAME,user); localStorage.setItem(LS_ROLE,role);
+      localStorage.setItem(LS_NAME,user);
       elUserChip.textContent=`User: ${user}`; elUserChip2.textContent=`User: ${user}`;
-      if(role){ elRoleChip.textContent=`Role: ${role}`; elRoleChip.style.display='inline-flex'; } else { elRoleChip.style.display='none'; }
-      setTab('menu'); loadChapters(); startTicker(); loadHistory(); tabMenu.style.display='inline-flex'; tabHistory.style.display='inline-flex';
+      setTab('menu'); loadChapters(); startTicker(); loadHistory(false);
+      tabMenu.style.display='inline-flex'; tabHistory.style.display='inline-flex';
     });
   });
 
-  /* ===== 章节/出题 ===== */
+  /* 章节/出题 */
   function loadChapters(){
     if(now()>=sessionUntil){ endSession(); return; }
     Papa.parse('Chapters.csv',{download:true,header:true,skipEmptyLines:true,complete:(res)=>{
@@ -469,14 +463,17 @@
 
       if(!isC){ q.attempt++; for(let i=0;i<2;i++){ queue.splice(Math.floor(Math.random()*(queue.length+1)),0,{...q}); } }
 
-      // 解释弹窗（总是显示）
+      /* 解释（内联，不遮挡） */
       const exp=getExplain(q);
-      modalTitle.textContent=isC?'Explanation (Correct)':'Explanation (Review)';
-      modalBody.innerHTML = exp ? `<div class="explain">${exp.replace(/\r?\n/g,'<br/>')}</div>`
-                                : `<div class="explain"><em>No explanation provided for this item.</em></div>`;
-      overlay.style.display='flex';
-      const goNext=()=>{ overlay.style.display='none'; nextQ(); };
-      modalNext.onclick=goNext; overlay.onclick=(e)=>{ if(e.target===overlay) goNext(); };
+      const expDiv=document.createElement('div');
+      expDiv.className='explain';
+      expDiv.innerHTML = exp ? exp.replace(/\r?\n/g,'<br/>') : '<em>No explanation provided for this item.</em>';
+      wrap.appendChild(expDiv);
+
+      /* 下一题按钮（题卡底部） */
+      const nb=document.createElement('button'); nb.className='btn'; nb.textContent='Next Question';
+      nb.onclick=()=> nextQ();
+      wrap.appendChild(nb);
     };
     wrap.appendChild(sb);
     elQuestionA.appendChild(wrap);
@@ -499,21 +496,15 @@
     ctrl.appendChild(btn);
     const backBtn=document.createElement('button'); backBtn.className='btn'; backBtn.textContent='Exit'; backBtn.onclick=()=>{ elFinish.style.display='none'; setTab('menu'); }; ctrl.appendChild(backBtn);
 
-    // 更新历史（提交后刷新一次）
-    loadHistory(true);
+    loadHistory(false); // 后台刷新历史，不切页
   }
 
-  /* ===== 历史成绩 ===== */
-  $('btnRefresh').onclick = ()=> loadHistory(true);
-
-  // 尝试从 PRIMARY(JSON/CSV)→FALLBACK(CSV) 读取
+  /* 历史成绩 */
   async function fetchText(url){
     const res = await fetch(url, { cache:'no-store' });
     if(!res.ok) throw new Error('HTTP '+res.status);
     return res.text();
   }
-
-  // 尝试解析为 JSON，失败则返回 null
   function tryJson(text){
     try{
       const obj = JSON.parse(text);
@@ -522,35 +513,23 @@
     }catch(_){}
     return null;
   }
-
-  // 解析 CSV 为对象数组
   function parseCsv(text){
     return new Promise((resolve)=>{
       Papa.parse(text, { header:true, skipEmptyLines:true, complete:(r)=> resolve(r.data) });
     });
   }
-
-  // 自动映射列
   function mapCols(row){
-    const m={};
-    Object.keys(row).forEach(k=>{ m[String(k||'').trim().toLowerCase()] = k; });
-    return (keys)=> {
-      for(const key of keys){ if(m[key]!=null) return m[key]; }
-      return null;
-    };
+    const m={}; Object.keys(row).forEach(k=>{ m[String(k||'').trim().toLowerCase()] = k; });
+    return (keys)=> { for(const key of keys){ if(m[key]!=null) return m[key]; } return null; };
   }
-
-  // 核心：加载 & 渲染历史
-  async function loadHistory(force=false){
+  async function loadHistory(show=false){
     if(!user) return;
     if(now()>=sessionUntil){ endSession(); return; }
-    setTab('history'); // 切到历史页
+    if(show) setTab('history');
     historyTable.innerHTML = `<tr><td colspan="7" class="muted">Loading...</td></tr>`;
     summaryRow.innerHTML = '';
 
-    const tryUrls = [];
-    if(HISTORY_PRIMARY_URL) tryUrls.push(HISTORY_PRIMARY_URL);
-    if(HISTORY_FALLBACK_CSV) tryUrls.push(HISTORY_FALLBACK_CSV);
+    const tryUrls=[]; if(HISTORY_PRIMARY_URL) tryUrls.push(HISTORY_PRIMARY_URL); if(HISTORY_FALLBACK_CSV) tryUrls.push(HISTORY_FALLBACK_CSV);
     if(tryUrls.length===0){
       historyTable.innerHTML = `<tr><td colspan="7" class="muted">请在代码顶部设置 HISTORY_PRIMARY_URL 或 HISTORY_FALLBACK_CSV。</td></tr>`;
       return;
@@ -570,7 +549,6 @@
       return;
     }
 
-    // 过滤出当前用户
     const out=[];
     for(const r of rows){
       const pick = mapCols(r);
@@ -596,7 +574,6 @@
       });
     }
 
-    // 按时间/分数降序粗略排序（没有日期时按原序）
     out.sort((a,b)=>{
       if(a.date && b.date){ return (new Date(b.date))- (new Date(a.date)); }
       if(a.score!=null && b.score!=null){ return b.score - a.score; }
@@ -605,7 +582,6 @@
 
     const limited = out.slice(0, HISTORY_LIMIT);
 
-    // 渲染表
     if(!limited.length){
       historyTable.innerHTML = `<tr><td colspan="7" class="muted">没有你的历史记录。</td></tr>`;
     }else{
@@ -622,7 +598,6 @@
       `).join('');
     }
 
-    // 统计
     if(limited.length){
       const n = limited.length;
       const scores = limited.map(x=>x.score).filter(x=>typeof x==='number' && !isNaN(x));
@@ -639,9 +614,6 @@
       `;
     }
   }
-
-  /* ===== 事件：刷新按钮 ===== */
-  // 已在上面绑定
 
 })();
 </script>
