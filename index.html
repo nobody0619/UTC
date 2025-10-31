@@ -26,7 +26,7 @@
   #menu,#sections,#quiz,#finish,#history{display:none}
 
   .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
-  .btn{padding:10px 14px; border:1px solid var(--border); border-radius:12px; background:#f8fafc; color:var(--text); cursor:pointer; transition:.15s; font-weight:600;}
+  .btn{padding:10px 14px; border:1px solid var(--border); border-radius:12px; background:#f8fafc; color:#0b1220; cursor:pointer; transition:.15s; font-weight:600;}
   .btn:hover{transform:translateY(-1px); box-shadow:0 6px 16px #00000010; border-color:#cbd5e1}
   .btn.accent{background:linear-gradient(180deg, var(--accent), var(--accent-d)); color:#fff; border:none}
   .btn.ghost{background:transparent; border:1px dashed var(--border); color:var(--muted)}
@@ -186,9 +186,12 @@
 (function(){
   'use strict';
 
-  /* ====== 历史成绩数据源（可留空；系统会用 postForm.action 猜测） ====== */
-  const HISTORY_PRIMARY_URL  = '';
-  const HISTORY_FALLBACK_CSV = '';
+
+// 用 Apps Script 的 JSON 作主数据源：
+const HISTORY_PRIMARY_URL  = 'https://script.google.com/macros/s/AKfycbyek_JoRdNny8wiHO_nOyiNJV2Gt2qoVjiJ3rhFZu0BkbWYflpVXYiE-_Gl7xHQROM/exec?mode=list';
+// 备选 CSV（可留空，或保留以下这行做兜底）：
+const HISTORY_FALLBACK_CSV = 'https://docs.google.com/spreadsheets/d/1ekSsHOISi1AevA637qfSjCoNb6BiN7e7KlcPYJ6WPQI/export?format=csv&gid=0';
+
 
   /* 其他配置 */
   const TRIAL_CODE = 'testing';
@@ -205,7 +208,7 @@
   let qs=[], queue=[], score=0, correct=0, wrong=0;
   let chapterStart=0, sessionUntil=0, isTrial=false, timerTick=null;
 
-  let historyCache=[]; // 最近一次抓到的历史（未筛人）
+  let historyCache=[];
 
   const MAX_OPTS=15;
 
@@ -220,7 +223,6 @@
   const elTimerChip=$('timerChip'), elTimerChip2=$('timerChip2'), elTrial=$('trialBanner');
   const historyTable=$('historyTable').querySelector('tbody'), summaryRow=$('summaryRow');
 
-  /* Tabs */
   function setTab(active){
     ['menu','sections','history'].forEach(id=>$(id).style.display='none');
     [tabMenu,tabHistory].forEach(t=>t.classList.remove('active'));
@@ -233,7 +235,6 @@
   $('btnBackChapters2').onclick=()=> setTab('menu');
   $('btnBackSectionsTop').onclick=()=>{ elQuiz.style.display='none'; $('backFloat').style.display='none'; elSections.style.display='block'; tabs.style.display='flex'; };
 
-  /* 工具 */
   const now=()=>Date.now();
   const fmtTime=(ms)=>{let s=Math.max(0,Math.floor(ms/1000)); const m=Math.floor(s/60); s%=60; return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;};
   const readUntil=(k)=>{const raw=localStorage.getItem(k); return raw?parseInt(raw,10):0;};
@@ -271,7 +272,6 @@
     } else endSession();
   })();
 
-  /* 账户 */
   function normalizeKeys(row){const m={}; Object.keys(row).forEach(k=>m[String(k||'').trim().toLowerCase()]=k); return m;}
   function field(row,map,keys){for(const k of keys){if(map[k]!=null){const v=row[map[k]]; if(v!=null && String(v).trim()!=='') return String(v).trim();}} return '';}
   function loadAccounts(cb){
@@ -285,7 +285,6 @@
   }
   const findAcc=(nm)=>{const l=nm.toLowerCase(); return (accounts||[]).find(a=>a.name.toLowerCase()===l)||null;};
 
-  /* 登录 */
   $('clearBtn').onclick=()=>{endSession(); $('username').value=''; $('accessCode').value=''; localStorage.removeItem(LS_NAME);};
   $('loginForm').addEventListener('submit',function(){
     const nm=$('username').value.trim(), pwd=$('accessCode').value.trim();
@@ -295,7 +294,7 @@
     if(pwd===TRIAL_CODE){
       const ts=now(); user=nm; sessionUntil=ts+TRIAL_MINUTES*60*1000; isTrial=true;
       writeUntil(LS_SESSION,sessionUntil); writeUntil(LS_TRIAL,sessionUntil); localStorage.setItem(LS_NAME,user);
-      elUserChip.textContent=`User: ${user}`; elUserChip2.textContent=`User: ${user}`;
+      $('userChip').textContent=`User: ${user}`; $('userChip2').textContent=`User: ${user}`;
       elWelcome.style.display='none'; showTabs(true); detectHistorySource(); setTab('menu'); loadChapters(); startTicker(); loadHistory(false);
       return;
     }
@@ -307,12 +306,11 @@
       if(pwd!==acc.password) return alert('Invalid password');
       const ts=now(); user=acc.name; isTrial=false; sessionUntil=ts+24*60*60*1000;
       writeUntil(LS_SESSION,sessionUntil); writeUntil(LS_TRIAL,0); localStorage.setItem(LS_NAME,user);
-      elUserChip.textContent=`User: ${user}`; elUserChip2.textContent=`User: ${user}`;
+      $('userChip').textContent=`User: ${user}`; $('userChip2').textContent=`User: ${user}`;
       elWelcome.style.display='none'; showTabs(true); detectHistorySource(); setTab('menu'); loadChapters(); startTicker(); loadHistory(false);
     });
   });
 
-  /* 载入 Chapters（带 section） */
   function loadChapters(){
     Papa.parse('Chapters.csv',{download:true,header:true,skipEmptyLines:true,complete:(res)=>{
       chapters = res.data.map(raw=>{ const r={}; Object.entries(raw).forEach(([k,v])=>{ r[k.trim()]= typeof v==='string'? v.trim(): v; }); return r; });
@@ -326,9 +324,9 @@
 
       grouped={}; chapters.forEach(r=>{ const c=r[chapterKey]; (grouped[c]||(grouped[c]=[])).push(r); });
 
-      elChapters.innerHTML='';
+      $('chapters').innerHTML='';
       Object.keys(grouped).forEach(chap=>{
-        const btn=document.createElement('button'); btn.className='btn'; btn.textContent=chap; btn.onclick=()=>openSections(chap); elChapters.appendChild(btn);
+        const btn=document.createElement('button'); btn.className='btn'; btn.textContent=chap; btn.onclick=()=>openSections(chap); $('chapters').appendChild(btn);
       });
     }, error:()=>alert('无法读取 Chapters.csv')});
   }
@@ -336,24 +334,23 @@
   function openSections(chap){
     currentChapter = chap;
     sectionList = grouped[chap].slice().sort((a,b)=> String(a[sectionKey]).localeCompare(String(b[sectionKey]), undefined, {numeric:true}));
-    elSecTitle.textContent = `Select Section — ${chap}`;
-    elSectionBtns.innerHTML='';
+    $('secTitle').textContent = `Select Section — ${chap}`;
+    $('sectionButtons').innerHTML='';
     sectionList.forEach((row,idx)=>{
       const b=document.createElement('button'); b.className='btn'; b.textContent=`${row[sectionKey]} : ${row[labelKey]}`;
       b.onclick=()=> startSection(idx);
-      elSectionBtns.appendChild(b);
+      $('sectionButtons').appendChild(b);
     });
-    setTab('menu'); elMenu.style.display='none'; elSections.style.display='block';
+    setTab('menu'); elMenu.style.display='none'; $('sections').style.display='block';
   }
 
   function startSection(idx){
     secIndex=idx;
     const sec=sectionList[secIndex];
-    // 隐藏 sections 和 tabs；显示返回按钮
-    elSections.style.display='none'; tabs.style.display='none';
+    $('sections').style.display='none'; tabs.style.display='none';
     $('backFloat').style.display='inline-block';
     elQuiz.style.display='block'; elFinish.style.display='none';
-    elTitle.textContent = `${currentChapter} – ${sec[sectionKey]}: ${sec[labelKey]}`;
+    $('quiz-title').textContent = `${currentChapter} – ${sec[sectionKey]}: ${sec[labelKey]}`;
     score=correct=wrong=0; chapterStart=now();
 
     Papa.parse(sec[sheetKey],{download:true,header:true,skipEmptyLines:true,complete:(r)=>{
@@ -364,13 +361,12 @@
     }, error:()=>alert('无法读取题库 CSV')});
   }
 
-  /* UI / 判分 */
   function updateUI(delta){
-    if(delta===0){ elDelta.textContent=''; elDelta.style.color='inherit'; }
-    else{ elDelta.textContent=(delta>0?`+${delta}`:`${delta}`); elDelta.style.color=delta>0?'var(--ok)':'var(--bad)'; }
-    elScore.childNodes[0].nodeValue = `Score: ${score} `;
-    elRemain.textContent=`Remaining: ${queue.length}`;
-    elProgress.max=qs.length; elProgress.value=qs.length-queue.length;
+    if(delta===0){ $('deltaTag').textContent=''; $('deltaTag').style.color='inherit'; }
+    else{ $('deltaTag').textContent=(delta>0?`+${delta}`:`${delta}`); $('deltaTag').style.color=delta>0?'var(--ok)':'var(--bad)'; }
+    $('score').childNodes[0].nodeValue = `Score: ${score} `;
+    $('remaining').textContent=`Remaining: ${queue.length}`;
+    $('progress').max=qs.length; $('progress').value=qs.length-queue.length;
   }
   function getExplain(q){
     const keys=['explain','explanation','note','notes'];
@@ -381,7 +377,7 @@
 
   function nextQ(){
     if(now()>=sessionUntil){ endSession(); return; }
-    elQuestionA.innerHTML=''; updateUI(0);
+    $('question-area').innerHTML=''; updateUI(0);
     if(queue.length===0){ return finishSection(); }
 
     const q = queue.shift();
@@ -452,7 +448,7 @@
       wrap.appendChild(nb);
     };
     wrap.appendChild(sb);
-    elQuestionA.appendChild(wrap);
+    $('question-area').appendChild(wrap);
   }
 
   function finishSection(){
@@ -464,7 +460,7 @@
 
     const ctrl=$('controls'); ctrl.innerHTML='';
     const backSec=document.createElement('button'); backSec.className='btn accent'; backSec.textContent='Back to Sections';
-    backSec.onclick=()=>{ elFinish.style.display='none'; elSections.style.display='block'; tabs.style.display='flex'; };
+    backSec.onclick=()=>{ elFinish.style.display='none'; $('sections').style.display='block'; tabs.style.display='flex'; };
     ctrl.appendChild(backSec);
 
     const backCh=document.createElement('button'); backCh.className='btn'; backCh.textContent='Back to Chapters';
@@ -474,7 +470,6 @@
     loadHistory(false); // 后台刷新历史
   }
 
-  /* ===== 历史成绩（放宽匹配 + 搜索框） ===== */
   document.getElementById('btnRefresh').onclick=()=> loadHistory(true);
 
   function detectHistorySource(){
@@ -499,20 +494,17 @@
     for(const url of tryUrls){
       try{
         const txt = await fetch(url, {cache:'no-store'}).then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.text(); });
-        // 优先 JSON
         try{
           const j = JSON.parse(txt);
           if (Array.isArray(j)) { rows = j; break; }
           if (j && Array.isArray(j.data)) { rows = j.data; break; }
         }catch(_){}
-        // CSV
         rows = await new Promise(res=>Papa.parse(txt,{header:true,skipEmptyLines:true,complete:r=>res(r.data)}));
         break;
       }catch(_){}
     }
     if(!rows){ tabHistory.style.display='none'; if(show) setTab('menu'); return; }
 
-    // 统一/缓存（未筛人）
     const normKey = k => String(k||'').trim().toLowerCase();
     const picker = row => {
       const m={}; Object.keys(row).forEach(k=> m[normKey(k)] = k );
@@ -541,7 +533,7 @@
       };
     });
 
-    renderHistory(user); // 用登录名先筛一次
+    renderHistory(user);
   }
 
   function renderHistory(nameFilter){
@@ -553,7 +545,7 @@
     if(out.length===0 && nameFilter){
       out = all.filter(r => norm(r.rawName).includes(norm(nameFilter)));
     }
-    if(out.length===0){ out = all.slice(); } // 仍然为空时，展示最近记录帮助排查
+    if(out.length===0){ out = all.slice(); }
 
     out.sort((a,b)=>{
       if(a.date && b.date){ return (new Date(b.date)) - (new Date(a.date)); }
@@ -602,7 +594,6 @@
     }
   }
 
-  /* 初始：检测是否显示 History */
   detectHistorySource();
 
 })();
