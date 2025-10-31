@@ -22,23 +22,23 @@
   }
   .card{width:100%; max-width:980px; background:var(--card); border:1px solid var(--border); border-radius:16px; padding:18px; box-shadow:0 10px 30px #0b12200f;}
   h1,h2,h3{margin:0 0 10px}
-  #welcome,#menu,#quiz,#finish,#history{margin:6px 0}
-  #menu,#quiz,#finish,#history{display:none}
+  #welcome,#menu,#sections,#quiz,#finish,#history{margin:6px 0}
+  #menu,#sections,#quiz,#finish,#history{display:none}
 
   .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
   .btn{padding:10px 14px; border:1px solid var(--border); border-radius:12px; background:#f8fafc; color:var(--text); cursor:pointer; transition:.15s; font-weight:600;}
   .btn:hover{transform:translateY(-1px); box-shadow:0 6px 16px #00000010; border-color:#cbd5e1}
   .btn.accent{background:linear-gradient(180deg, var(--accent), var(--accent-d)); color:#fff; border:none}
   .btn.ghost{background:transparent; border:1px dashed var(--border); color:var(--muted)}
-  input[type="text"], input[type="password"]{width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--border); background:#fff; color:var(--text);}
+  input[type="text"], input[type="password"]{width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--border); background:#fff; color:#0f172a;}
   input[type="text"]:focus, input[type="password"]:focus{border-color:var(--accent)}
-  #menu button{margin:6px 6px 0 0}
+  #menu button,#sections button{margin:6px 6px 0 0}
   .meta{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:8px 0}
   .chip{background:var(--chip); border:1px solid var(--border); color:var(--muted); padding:6px 10px; border-radius:999px; font-size:12px}
 
   /* 顶部标签（仅 Chapters / History） */
   #tabs{display:none; gap:8px; margin:0 0 12px}
-  .tab{padding:8px 12px; border:1px solid var(--border); border-radius:999px; cursor:pointer; color:var(--muted); background:#fff}
+  .tab{padding:8px 12px; border:1px solid var(--border); border-radius:999px; cursor:pointer; color:#64748b; background:#fff}
   .tab.active{color:#fff; background:linear-gradient(180deg, var(--accent), var(--accent-d)); border:none}
 
   /* 题卡 & 解释（内联） */
@@ -99,7 +99,7 @@
       </form>
     </div>
 
-    <!-- 章节列表（无 Section，点击即开始） -->
+    <!-- 章节列表 -->
     <div id="menu">
       <div class="meta">
         <span class="chip" id="userChip">User</span>
@@ -109,10 +109,19 @@
       <div id="chapters"></div>
     </div>
 
+    <!-- Section 列表（点击 Chapter 后出现） -->
+    <div id="sections">
+      <div class="row" style="justify-content:space-between; align-items:center">
+        <h2 id="secTitle" style="margin:0">Select Section</h2>
+        <button id="btnBackChapters" class="btn">← Back to Chapters</button>
+      </div>
+      <div id="sectionButtons" style="margin-top:6px"></div>
+    </div>
+
     <!-- 作答页 -->
     <div id="quiz">
       <div id="backFloat">
-        <button id="btnBackChaptersTop" class="btn">← Back to Chapters</button>
+        <button id="btnBackSectionsTop" class="btn">← Back to Sections</button>
       </div>
       <div class="meta">
         <span class="chip" id="userChip2">User</span>
@@ -140,7 +149,7 @@
         <h3 style="margin:0">History</h3>
         <div class="row">
           <button id="btnRefresh" class="btn">Refresh</button>
-          <button id="btnBackChapters" class="btn ghost">Back to Chapters</button>
+          <button id="btnBackChapters2" class="btn ghost">Back to Chapters</button>
         </div>
       </div>
       <div class="row" id="summaryRow" style="gap:8px; margin:8px 0"></div>
@@ -150,7 +159,7 @@
             <tr>
               <th>Date</th>
               <th>User</th>
-              <th>Quiz</th>
+              <th>Quiz/Section</th>
               <th class="num">Score</th>
               <th class="num">Correct</th>
               <th class="num">Wrong</th>
@@ -187,17 +196,20 @@
 
   /* 状态 */
   let user='', accounts=null;
-  let entries=[]; // 无 section：每行 = 一个可选题库
+  let chapters=[], grouped={};
+  let chapterKey, sectionKey, labelKey, sheetKey;
+  let currentChapter='', sectionList=[], secIndex=-1;
   let qs=[], queue=[], score=0, correct=0, wrong=0;
-  let quizTitle='', sheetUrl='', chapterStart=0, sessionUntil=0, isTrial=false, timerTick=null;
+  let chapterStart=0, sessionUntil=0, isTrial=false, timerTick=null;
 
   const MAX_OPTS=15;
 
   /* DOM */
   const $=(id)=>document.getElementById(id);
   const tabs=$('tabs'), tabMenu=$('tabMenu'), tabHistory=$('tabHistory');
-  const elWelcome=$('welcome'), elMenu=$('menu'), elQuiz=$('quiz'), elFinish=$('finish'), elHistory=$('history');
-  const elChapters=$('chapters'), elQuestionA=$('question-area'), elProgress=$('progress');
+  const elWelcome=$('welcome'), elMenu=$('menu'), elSections=$('sections'), elQuiz=$('quiz'), elFinish=$('finish'), elHistory=$('history');
+  const elChapters=$('chapters'), elSectionBtns=$('sectionButtons'), elSecTitle=$('secTitle');
+  const elQuestionA=$('question-area'), elProgress=$('progress');
   const elScore=$('score'), elDelta=$('deltaTag'), elRemain=$('remaining'), elTitle=$('quiz-title');
   const elUserChip=$('userChip'), elUserChip2=$('userChip2');
   const elTimerChip=$('timerChip'), elTimerChip2=$('timerChip2'), elTrial=$('trialBanner');
@@ -205,14 +217,16 @@
 
   /* Tabs */
   function setTab(active){
-    ['menu','history'].forEach(id=>$(id).style.display='none');
+    ['menu','sections','history'].forEach(id=>$(id).style.display='none');
     [tabMenu,tabHistory].forEach(t=>t.classList.remove('active'));
     if(active==='menu'){ tabMenu.classList.add('active'); elMenu.style.display='block'; }
     if(active==='history'){ tabHistory.classList.add('active'); elHistory.style.display='block'; }
   }
   tabMenu.onclick=()=> setTab('menu');
   tabHistory.onclick=()=> loadHistory(true);
-  $('btnBackChapters').onclick=()=> setTab('menu');
+  $('btnBackChapters').onclick=()=>{ elSections.style.display='none'; setTab('menu'); };
+  $('btnBackChapters2').onclick=()=> setTab('menu');
+  $('btnBackSectionsTop').onclick=()=>{ elQuiz.style.display='none'; $('backFloat').style.display='none'; elSections.style.display='block'; tabs.style.display='flex'; };
 
   /* 工具 */
   const now=()=>Date.now();
@@ -239,7 +253,7 @@
   function endSession(){
     writeUntil(LS_SESSION,0); writeUntil(LS_TRIAL,0);
     isTrial=false; stopTicker();
-    elQuiz.style.display='none'; elFinish.style.display='none'; showTabs(false);
+    elQuiz.style.display='none'; elFinish.style.display='none'; elSections.style.display='none'; showTabs(false);
     $('backFloat').style.display='none';
     elWelcome.style.display='block'; elTrial.style.display='none';
   }
@@ -277,7 +291,7 @@
       const ts=now(); user=nm; sessionUntil=ts+TRIAL_MINUTES*60*1000; isTrial=true;
       writeUntil(LS_SESSION,sessionUntil); writeUntil(LS_TRIAL,sessionUntil); localStorage.setItem(LS_NAME,user);
       elUserChip.textContent=`User: ${user}`; elUserChip2.textContent=`User: ${user}`;
-      elWelcome.style.display='none'; showTabs(true); detectHistorySource(); setTab('menu'); loadEntries(); startTicker(); loadHistory(false);
+      elWelcome.style.display='none'; showTabs(true); detectHistorySource(); setTab('menu'); loadChapters(); startTicker(); loadHistory(false);
       return;
     }
 
@@ -289,54 +303,61 @@
       const ts=now(); user=acc.name; isTrial=false; sessionUntil=ts+24*60*60*1000;
       writeUntil(LS_SESSION,sessionUntil); writeUntil(LS_TRIAL,0); localStorage.setItem(LS_NAME,user);
       elUserChip.textContent=`User: ${user}`; elUserChip2.textContent=`User: ${user}`;
-      elWelcome.style.display='none'; showTabs(true); detectHistorySource(); setTab('menu'); loadEntries(); startTicker(); loadHistory(false);
+      elWelcome.style.display='none'; showTabs(true); detectHistorySource(); setTab('menu'); loadChapters(); startTicker(); loadHistory(false);
     });
   });
 
-  /* 载入条目（无 section） */
-  function loadEntries(){
+  /* 载入 Chapters（带 section） */
+  function loadChapters(){
     Papa.parse('Chapters.csv',{download:true,header:true,skipEmptyLines:true,complete:(res)=>{
-      entries = res.data.map(r=>{
-        const m=normalizeKeys(r);
-        const label = field(r,m,['label','chapter','title','name']) || 'Untitled';
-        const sheet = field(r,m,['sheet','url','link']);
-        return sheet? {label, sheet}: null;
-      }).filter(Boolean);
-      if(!entries.length) return alert('Chapters.csv 里缺少可用的 sheet 链接');
-      renderEntryButtons();
+      chapters = res.data.map(raw=>{ const r={}; Object.entries(raw).forEach(([k,v])=>{ r[k.trim()]= typeof v==='string'? v.trim(): v; }); return r; });
+      if(!chapters.length){ alert('Check Chapters.csv file'); return; }
+      const keys=Object.keys(chapters[0]);
+      chapterKey = keys.find(k=>k.toLowerCase()==='chapter');
+      sectionKey = keys.find(k=>k.toLowerCase()==='section');
+      labelKey   = keys.find(k=>k.toLowerCase()==='label');
+      sheetKey   = keys.find(k=>k.toLowerCase()==='sheet');
+      if(!chapterKey||!sectionKey||!labelKey||!sheetKey){ alert('Chapters.csv requires: chapter, section, label, sheet'); return; }
+
+      grouped={}; chapters.forEach(r=>{ const c=r[chapterKey]; (grouped[c]||(grouped[c]=[])).push(r); });
+
+      elChapters.innerHTML='';
+      Object.keys(grouped).forEach(chap=>{
+        const btn=document.createElement('button'); btn.className='btn'; btn.textContent=chap; btn.onclick=()=>openSections(chap); elChapters.appendChild(btn);
+      });
     }, error:()=>alert('无法读取 Chapters.csv')});
   }
 
-  function renderEntryButtons(){
-    elChapters.innerHTML='';
-    entries.forEach(item=>{
-      const b=document.createElement('button');
-      b.className='btn'; b.textContent=item.label;
-      b.onclick=()=> startQuiz(item);
-      elChapters.appendChild(b);
+  function openSections(chap){
+    currentChapter = chap;
+    sectionList = grouped[chap].slice().sort((a,b)=> String(a[sectionKey]).localeCompare(String(b[sectionKey]), undefined, {numeric:true}));
+    elSecTitle.textContent = `Select Section — ${chap}`;
+    elSectionBtns.innerHTML='';
+    sectionList.forEach((row,idx)=>{
+      const b=document.createElement('button'); b.className='btn'; b.textContent=`${row[sectionKey]} : ${row[labelKey]}`;
+      b.onclick=()=> startSection(idx);
+      elSectionBtns.appendChild(b);
     });
+    setTab('menu'); elMenu.style.display='none'; elSections.style.display='block';
   }
 
-  /* 开始作答 */
-  function startQuiz(item){
-    quizTitle=item.label; sheetUrl=item.sheet;
-    // 隐藏菜单、标签；显示返回按钮
-    setTab('menu'); elMenu.style.display='none'; showTabs(false);
+  function startSection(idx){
+    secIndex=idx;
+    const sec=sectionList[secIndex];
+    // 隐藏 sections 和 tabs；显示返回按钮
+    elSections.style.display='none'; tabs.style.display='none';
     $('backFloat').style.display='inline-block';
     elQuiz.style.display='block'; elFinish.style.display='none';
-    elTitle.textContent = quizTitle;
+    elTitle.textContent = `${currentChapter} – ${sec[sectionKey]}: ${sec[labelKey]}`;
     score=correct=wrong=0; chapterStart=now();
 
-    Papa.parse(sheetUrl,{download:true,header:true,skipEmptyLines:true,complete:(r)=>{
+    Papa.parse(sec[sheetKey],{download:true,header:true,skipEmptyLines:true,complete:(r)=>{
       qs = r.data.map(q=>({...q,attempt:0}));
       queue = shuffle([...qs]);
       updateUI(0); nextQ();
       window.scrollTo({top:0,behavior:'smooth'});
     }, error:()=>alert('无法读取题库 CSV')});
   }
-
-  /* 返回章节（作答页顶部按钮 & 完成页按钮） */
-  $('btnBackChaptersTop').onclick=()=>{ elQuiz.style.display='none'; $('backFloat').style.display='none'; setTab('menu'); elMenu.style.display='block'; showTabs(true); };
 
   /* UI / 判分 */
   function updateUI(delta){
@@ -356,7 +377,7 @@
   function nextQ(){
     if(now()>=sessionUntil){ endSession(); return; }
     elQuestionA.innerHTML=''; updateUI(0);
-    if(queue.length===0){ return finishQuiz(); }
+    if(queue.length===0){ return finishSection(); }
 
     const q = queue.shift();
     const wrap=document.createElement('div'); wrap.className='question';
@@ -429,20 +450,27 @@
     elQuestionA.appendChild(wrap);
   }
 
-  function finishQuiz(){
+  function finishSection(){
     elQuiz.style.display='none'; $('backFloat').style.display='none'; elFinish.style.display='block';
     $('finish-msg').textContent=`Well done, ${user}!`;
     $('stats').textContent=`Score: ${score}, Correct: ${correct}, Wrong: ${wrong}`;
-    const f=$('postForm'); f.quizId.value=quizTitle; f.name.value=user; f.score.value=score; f.correct.value=correct; f.wrong.value=wrong; f.time.value=Math.floor((now()-chapterStart)/1000); f.submit();
+    const sec=sectionList[secIndex];
+    const f=$('postForm'); f.quizId.value=`${currentChapter}_${sec[sectionKey]}`; f.name.value=user; f.score.value=score; f.correct.value=correct; f.wrong.value=wrong; f.time.value=Math.floor((now()-chapterStart)/1000); f.submit();
 
     const ctrl=$('controls'); ctrl.innerHTML='';
-    const btnBack=document.createElement('button'); btnBack.className='btn accent'; btnBack.textContent='Back to Chapters';
-    btnBack.onclick=()=>{ elFinish.style.display='none'; setTab('menu'); elMenu.style.display='block'; showTabs(true); };
-    ctrl.appendChild(btnBack);
+    const backSec=document.createElement('button'); backSec.className='btn accent'; backSec.textContent='Back to Sections';
+    backSec.onclick=()=>{ elFinish.style.display='none'; elSections.style.display='block'; tabs.style.display='flex'; };
+    ctrl.appendChild(backSec);
+
+    const backCh=document.createElement('button'); backCh.className='btn'; backCh.textContent='Back to Chapters';
+    backCh.onclick=()=>{ elFinish.style.display='none'; setTab('menu'); };
+    ctrl.appendChild(backCh);
+
+    loadHistory(false); // 后台刷新历史
   }
 
   /* 历史成绩 */
-  $('btnRefresh').onclick=()=> loadHistory(true);
+  document.getElementById('btnRefresh').onclick=()=> loadHistory(true);
   function detectHistorySource(){
     const postUrl=$('postForm').getAttribute('action')||'';
     const hasAny = !!(HISTORY_PRIMARY_URL || HISTORY_FALLBACK_CSV || postUrl);
@@ -476,7 +504,7 @@
     for(const r of rows){
       const pick=mapCols(r);
       const kName=pick(['name','user','account','student']);
-      const kQuiz=pick(['quizid','quiz','chapter','title','paper']);
+      const kQuiz=pick(['quizid','quiz','chapter','title','paper','section']);
       const kScore=pick(['score','mark','marks']);
       const kC=pick(['correct','right']);
       const kW=pick(['wrong','incorrect']);
@@ -523,6 +551,11 @@
 
   /* 初始检测历史标签显示 */
   detectHistorySource();
+  function detectHistorySource(){
+    const postUrl=$('postForm').getAttribute('action')||'';
+    const hasAny = !!(HISTORY_PRIMARY_URL || HISTORY_FALLBACK_CSV || postUrl);
+    tabHistory.style.display = hasAny ? 'inline-flex' : 'none';
+  }
 
 })();
 </script>
