@@ -20,7 +20,7 @@
       linear-gradient(180deg, #f8fafc, var(--bg) 40%, #eef2f7 100%);
     min-height:100vh; display:flex; align-items:flex-start; justify-content:center; padding:28px 12px;
   }
-  .card{width:100%; max-width:980px; background:var(--card); border:1px solid var(--border); border-radius:16px; padding:18px; box-shadow:0 10px 30px #0b12200f;}
+  .card{width:100%; max-width:980px; background:var(--card); border:1px solid var(--border); border-radius:16px; padding:18px; box-shadow: 0 10px 30px #0b12200f;}
   h1,h2,h3{margin:0 0 10px}
   #welcome,#menu,#sections,#quiz,#finish,#history{margin:6px 0}
   #menu,#sections,#quiz,#finish,#history{display:none}
@@ -30,8 +30,8 @@
   .btn:hover{transform:translateY(-1px); box-shadow:0 6px 16px #00000010; border-color:#cbd5e1}
   .btn.accent{background:linear-gradient(180deg, var(--accent), var(--accent-d)); color:#fff; border:none}
   .btn.ghost{background:transparent; border:1px dashed var(--border); color:var(--muted)}
-  input[type="text"], input[type="password"]{width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--border); background:#fff; color:#0f172a;}
-  input[type="text"]:focus, input[type="password"]:focus{border-color:var(--accent)}
+  input[type="text"],input[type="password"]{width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--border); background:#fff; color:#0f172a;}
+  input[type="text"]:focus,input[type="password"]:focus{border-color:var(--accent)}
   #menu button,#sections button{margin:6px 6px 0 0}
   .meta{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:8px 0}
   .chip{background:var(--chip); border:1px solid var(--border); color:var(--muted); padding:6px 10px; border-radius:999px; font-size:12px}
@@ -109,7 +109,7 @@
       <div id="chapters"></div>
     </div>
 
-    <!-- Section 列表（点击 Chapter 后出现） -->
+    <!-- Section 列表 -->
     <div id="sections">
       <div class="row" style="justify-content:space-between; align-items:center">
         <h2 id="secTitle" style="margin:0">Select Section</h2>
@@ -143,11 +143,12 @@
       <div id="controls" class="row"></div>
     </div>
 
-    <!-- 历史成绩 -->
+    <!-- 历史成绩（右侧带过滤框） -->
     <div id="history">
       <div class="row" style="justify-content:space-between;">
         <h3 style="margin:0">History</h3>
         <div class="row">
+          <input id="historyFilter" type="text" placeholder="Filter by name…" style="padding:8px 10px;border:1px solid var(--border);border-radius:10px"/>
           <button id="btnRefresh" class="btn">Refresh</button>
           <button id="btnBackChapters2" class="btn ghost">Back to Chapters</button>
         </div>
@@ -185,9 +186,11 @@
 (function(){
   'use strict';
 
-  /* 历史来源（可留空，系统会用 postForm.action 猜测） */
+  /* ====== 历史成绩数据源（可留空；系统会用 postForm.action 猜测） ====== */
   const HISTORY_PRIMARY_URL  = '';
   const HISTORY_FALLBACK_CSV = '';
+
+  /* 其他配置 */
   const TRIAL_CODE = 'testing';
   const TRIAL_MINUTES = 5;
   const HISTORY_LIMIT = 50;
@@ -201,6 +204,8 @@
   let currentChapter='', sectionList=[], secIndex=-1;
   let qs=[], queue=[], score=0, correct=0, wrong=0;
   let chapterStart=0, sessionUntil=0, isTrial=false, timerTick=null;
+
+  let historyCache=[]; // 最近一次抓到的历史（未筛人）
 
   const MAX_OPTS=15;
 
@@ -469,17 +474,14 @@
     loadHistory(false); // 后台刷新历史
   }
 
-  /* 历史成绩 */
+  /* ===== 历史成绩（放宽匹配 + 搜索框） ===== */
   document.getElementById('btnRefresh').onclick=()=> loadHistory(true);
+
   function detectHistorySource(){
     const postUrl=$('postForm').getAttribute('action')||'';
     const hasAny = !!(HISTORY_PRIMARY_URL || HISTORY_FALLBACK_CSV || postUrl);
     tabHistory.style.display = hasAny ? 'inline-flex' : 'none';
   }
-  async function fetchText(url){ const r=await fetch(url,{cache:'no-store'}); if(!r.ok) throw new Error('HTTP '+r.status); return r.text(); }
-  function tryJson(t){try{const o=JSON.parse(t); if(Array.isArray(o)) return o; if(o&&Array.isArray(o.data)) return o.data;}catch(_){ } return null;}
-  function parseCsv(t){return new Promise(res=>Papa.parse(t,{header:true,skipEmptyLines:true,complete:r=>res(r.data)}));}
-  function mapCols(row){ const m={}; Object.keys(row).forEach(k=>m[String(k||'').trim().toLowerCase()]=k); return (keys)=>{for(const k of keys){ if(m[k]!=null) return m[k]; } return null; }; }
 
   async function loadHistory(show=false){
     if(!user) return;
@@ -495,67 +497,113 @@
 
     let rows=null;
     for(const url of tryUrls){
-      try{ const txt=await fetchText(url); const j=tryJson(txt); rows=j?j:await parseCsv(txt); break; }
-      catch(_){ /* try next */ }
+      try{
+        const txt = await fetch(url, {cache:'no-store'}).then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.text(); });
+        // 优先 JSON
+        try{
+          const j = JSON.parse(txt);
+          if (Array.isArray(j)) { rows = j; break; }
+          if (j && Array.isArray(j.data)) { rows = j.data; break; }
+        }catch(_){}
+        // CSV
+        rows = await new Promise(res=>Papa.parse(txt,{header:true,skipEmptyLines:true,complete:r=>res(r.data)}));
+        break;
+      }catch(_){}
     }
     if(!rows){ tabHistory.style.display='none'; if(show) setTab('menu'); return; }
 
-    const out=[];
-    for(const r of rows){
-      const pick=mapCols(r);
-      const kName=pick(['name','user','account','student']);
-      const kQuiz=pick(['quizid','quiz','chapter','title','paper','section']);
-      const kScore=pick(['score','mark','marks']);
-      const kC=pick(['correct','right']);
-      const kW=pick(['wrong','incorrect']);
-      const kDur=pick(['duration','seconds','time','timesec']);
-      const kTs=pick(['timestamp','date','datetime','time']);
-      const nm=kName?String(r[kName]||'').trim():'';
-      if(!nm || nm.toLowerCase()!==user.toLowerCase()) continue;
-      out.push({
-        date:kTs?String(r[kTs]||'').trim():'',
-        name:nm, quiz:kQuiz?String(r[kQuiz]||'').trim():'',
-        score:kScore!=null?Number(r[kScore]||0):null,
-        correct:kC!=null?Number(r[kC]||0):null,
-        wrong:kW!=null?Number(r[kW]||0):null,
-        duration:kDur!=null?Number(r[kDur]||0):null
-      });
-    }
-    out.sort((a,b)=> (a.date&&b.date)?(new Date(b.date))-(new Date(a.date)) : (b.score||0)-(a.score||0) );
-    const limited=out.slice(0,HISTORY_LIMIT);
+    // 统一/缓存（未筛人）
+    const normKey = k => String(k||'').trim().toLowerCase();
+    const picker = row => {
+      const m={}; Object.keys(row).forEach(k=> m[normKey(k)] = k );
+      const pick = (...cands)=> { for(const c of cands){ if(m[c]!=null) return m[c]; } return null; };
+      return {
+        nameKey: pick('name','user','account','student','nama','participant'),
+        quizKey: pick('quizid','quiz','chapter','title','paper','section'),
+        scoreKey: pick('score','mark','marks'),
+        cKey: pick('correct','right'),
+        wKey: pick('wrong','incorrect'),
+        tKey: pick('duration','seconds','time','timesec'),
+        tsKey: pick('timestamp','date','datetime','time')
+      };
+    };
 
-    if(!limited.length){ historyTable.innerHTML=`<tr><td colspan="7" class="muted">No records yet.</td></tr>`; }
-    else{
-      historyTable.innerHTML = limited.map(r=>`
-        <tr>
-          <td>${r.date||'<span class="muted">—</span>'}</td>
-          <td>${r.name}</td>
-          <td>${r.quiz||'<span class="muted">—</span>'}</td>
-          <td class="num">${r.score!=null?r.score:'—'}</td>
-          <td class="num">${r.correct!=null?r.correct:'—'}</td>
-          <td class="num">${r.wrong!=null?r.wrong:'—'}</td>
-          <td class="num">${r.duration!=null?r.duration:'—'}</td>
-        </tr>`).join('');
-      const n=limited.length, scores=limited.map(x=>x.score).filter(x=>Number.isFinite(x)), times=limited.map(x=>x.duration).filter(x=>Number.isFinite(x));
-      const avg=scores.length?(scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(2):'—';
-      const max=scores.length?Math.max(...scores):'—';
-      const last=limited[0];
-      summaryRow.innerHTML=`
-        <span class="chip">Records: ${n}</span>
-        <span class="chip">Avg Score: ${avg}</span>
-        <span class="chip">Best: ${max}</span>
-        <span class="chip">Last: ${last.score!=null?last.score:'—'}${last.quiz?(' • '+last.quiz):''}</span>
-        <span class="chip">Avg Time(s): ${times.length?(Math.round(times.reduce((a,b)=>a+b,0)/times.length)):'—'}</span>`;
+    historyCache = rows.map(r=>{
+      const p = picker(r);
+      return {
+        rawName: p.nameKey ? String(r[p.nameKey]||'') : '',
+        date: p.tsKey ? String(r[p.tsKey]||'') : '',
+        quiz: p.quizKey ? String(r[p.quizKey]||'') : '',
+        score: p.scoreKey!=null ? Number(r[p.scoreKey]||0) : null,
+        correct: p.cKey!=null ? Number(r[p.cKey]||0) : null,
+        wrong: p.wKey!=null ? Number(r[p.wKey]||0) : null,
+        duration: p.tKey!=null ? Number(r[p.tKey]||0) : null
+      };
+    });
+
+    renderHistory(user); // 用登录名先筛一次
+  }
+
+  function renderHistory(nameFilter){
+    const tbody = historyTable;
+    const norm = s => String(s||'').trim().toLowerCase();
+
+    const all = historyCache.filter(r => r.rawName && r.rawName.trim()!=='');
+    let out = all.filter(r => norm(r.rawName) === norm(nameFilter));
+    if(out.length===0 && nameFilter){
+      out = all.filter(r => norm(r.rawName).includes(norm(nameFilter)));
+    }
+    if(out.length===0){ out = all.slice(); } // 仍然为空时，展示最近记录帮助排查
+
+    out.sort((a,b)=>{
+      if(a.date && b.date){ return (new Date(b.date)) - (new Date(a.date)); }
+      if(a.score!=null && b.score!=null){ return b.score - a.score; }
+      return 0;
+    });
+    const limited = out.slice(0, HISTORY_LIMIT);
+
+    if(!limited.length){
+      tbody.innerHTML = `<tr><td colspan="7" class="muted">No records yet.</td></tr>`;
+      summaryRow.innerHTML='';
+      return;
+    }
+
+    tbody.innerHTML = limited.map(r=>`
+      <tr>
+        <td>${r.date||'<span class="muted">—</span>'}</td>
+        <td>${(r.rawName||'').trim()||'<span class="muted">—</span>'}</td>
+        <td>${r.quiz||'<span class="muted">—</span>'}</td>
+        <td class="num">${r.score!=null?r.score:'—'}</td>
+        <td class="num">${r.correct!=null?r.correct:'—'}</td>
+        <td class="num">${r.wrong!=null?r.wrong:'—'}</td>
+        <td class="num">${r.duration!=null?r.duration:'—'}</td>
+      </tr>
+    `).join('');
+
+    const n=limited.length;
+    const scores = limited.map(x=>x.score).filter(Number.isFinite);
+    const times  = limited.map(x=>x.duration).filter(Number.isFinite);
+    const avg = scores.length ? (scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(2) : '—';
+    const max = scores.length ? Math.max(...scores) : '—';
+    const last = limited[0];
+    summaryRow.innerHTML = `
+      <span class="chip">Records: ${n}</span>
+      <span class="chip">Avg Score: ${avg}</span>
+      <span class="chip">Best: ${max}</span>
+      <span class="chip">Last: ${last.score!=null?last.score:'—'}${last.quiz?(' • '+last.quiz):''}</span>
+      <span class="chip">Avg Time(s): ${times.length?(Math.round(times.reduce((a,b)=>a+b,0)/times.length)):'—'}</span>
+    `;
+
+    const inp = document.getElementById('historyFilter');
+    if (inp && !inp._bound){
+      inp._bound = true;
+      inp.addEventListener('input', e => renderHistory(e.target.value));
+      if (!inp.value) inp.value = nameFilter || '';
     }
   }
 
-  /* 初始检测历史标签显示 */
+  /* 初始：检测是否显示 History */
   detectHistorySource();
-  function detectHistorySource(){
-    const postUrl=$('postForm').getAttribute('action')||'';
-    const hasAny = !!(HISTORY_PRIMARY_URL || HISTORY_FALLBACK_CSV || postUrl);
-    tabHistory.style.display = hasAny ? 'inline-flex' : 'none';
-  }
 
 })();
 </script>
