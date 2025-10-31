@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Pulbic Mutual Consultant Exam Training</title>
+<title>PMC Quiz</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 <style>
   :root{
-    /* 浅色主题主色 */
+    /* 浅色主题 */
     --bg:#f6f7fb; --card:#ffffff; --border:#d9dee7; --muted:#64748b; --text:#0f172a;
     --accent:#0ea5e9; --accent-d:#0284c7;
     --ok:#16a34a; --bad:#ef4444; --chip:#f1f5f9;
@@ -23,7 +23,6 @@
   }
   .card{width:100%; max-width:980px; background:var(--card); border:1px solid var(--border); border-radius:16px; padding:18px; box-shadow: 0 10px 30px #0b12200f;}
   h1,h2,h3{margin:0 0 10px}
-  #topNote{font-size:13px; color:var(--muted); margin-bottom:6px}
   #welcome,#menu,#quiz,#finish,#history{margin:6px 0}
   #menu,#quiz,#finish,#history{display:none}
 
@@ -44,8 +43,8 @@
   .meta{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:8px 0}
   .chip{background:var(--chip); border:1px solid var(--border); color:var(--muted); padding:6px 10px; border-radius:999px; font-size:12px}
 
-  /* 顶部标签 */
-  .tabs{display:flex; gap:8px; margin:8px 0 14px}
+  /* 顶部标签（不含 Login） */
+  #tabs{display:none; gap:8px; margin:0 0 12px}
   .tab{padding:8px 12px; border:1px solid var(--border); border-radius:999px; cursor:pointer; color:var(--muted); background:#fff}
   .tab.active{color:#fff; background:linear-gradient(180deg, var(--accent), var(--accent-d)); border:none}
 
@@ -78,16 +77,14 @@
 </head>
 <body>
   <div class="card">
-    <div id="topNote">PMC Quiz • Per-Account Password • Inline Explanations • History</div>
 
-    <!-- 顶部标签 -->
-    <div class="tabs">
-      <div id="tabLogin" class="tab active">Login</div>
-      <div id="tabMenu" class="tab" style="display:none">Chapters</div>
-      <div id="tabHistory" class="tab" style="display:none">History</div>
+    <!-- 顶部标签（仅 Chapters / History；登录后才显示，做题时隐藏） -->
+    <div id="tabs">
+      <div id="tabMenu" class="tab active">Chapters</div>
+      <div id="tabHistory" class="tab">History</div>
     </div>
 
-    <!-- 1) 登录（包 form，避免浏览器警告） -->
+    <!-- 1) 登录（没有 Login 按钮 tab；仍需输入账号密码） -->
     <div id="welcome">
       <h2>Sign in</h2>
       <p class="hint">每个账号都有自己的密码；或使用 <code>testing</code> 开启 5 分钟试用。</p>
@@ -104,7 +101,7 @@
         </div>
         <div id="trialBanner" class="trial"></div>
         <div class="row" style="margin-top:10px">
-          <button id="startBtn" class="btn accent" type="submit">Start Quiz</button>
+          <button id="startBtn" class="btn accent" type="submit">Start</button>
           <button id="clearBtn" class="btn ghost" type="button">Clear Saved Session</button>
         </div>
       </form>
@@ -120,7 +117,7 @@
       <div id="chapters"></div>
     </div>
 
-    <!-- 3) 测验 -->
+    <!-- 3) 测验（进入后自动隐藏 #tabs，避免干扰作答） -->
     <div id="quiz">
       <div class="meta">
         <span class="chip" id="userChip2">User</span>
@@ -142,7 +139,7 @@
       <div id="controls" class="row"></div>
     </div>
 
-    <!-- 5) 历史成绩 -->
+    <!-- 5) 历史成绩（若数据源不可用，会自动隐藏 History 标签） -->
     <div id="history">
       <div class="row" style="justify-content:space-between;">
         <h3 style="margin:0">History</h3>
@@ -151,7 +148,6 @@
           <button id="btnBackChapters" class="btn ghost">Back to Chapters</button>
         </div>
       </div>
-      <p class="hint" id="historyHint">自动从 Google Sheet 读取你的历史成绩（最近 50 条）。</p>
       <div class="row" id="summaryRow" style="gap:8px; margin:8px 0"></div>
       <div style="overflow:auto; max-height:50vh; border:1px solid var(--border); border-radius:12px; padding:8px;">
         <table id="historyTable">
@@ -185,14 +181,9 @@
 (function(){
   'use strict';
 
-  /* ====== 历史成绩数据源（填你自己的） ======
-     任一填入即可；两者都填则优先用 PRIMARY，失败再用 FALLBACK
-     例：
-     const HISTORY_PRIMARY_URL  = 'https://script.google.com/.../exec?mode=list';
-     const HISTORY_FALLBACK_CSV = 'https://docs.google.com/spreadsheets/d/<ID>/gviz/tq?tqx=out:csv&sheet=Scores';
-  */
-  const HISTORY_PRIMARY_URL  = '';
-  const HISTORY_FALLBACK_CSV = '';
+  /* ====== 历史成绩数据源（可留空，系统会自动尝试从 postForm.action 推断） ====== */
+  const HISTORY_PRIMARY_URL  = ''; // 如：你的 Apps Script 列表接口（JSON/CSV）
+  const HISTORY_FALLBACK_CSV = ''; // 如：Google Sheet CSV 导出链接
 
   /* 其他配置 */
   const TRIAL_CODE = 'testing';
@@ -211,6 +202,7 @@
   let currentChapter = '', sectionList = [], secIndex = 0;
   let qs = [], queue = [], score = 0, correct = 0, wrong = 0;
   let chapterStart = 0, sessionUntil = 0, isTrial = false, timerTick = null;
+  let historyAvailable = false;
 
   const MAX_OPTS = 15;
 
@@ -221,19 +213,18 @@
   const elScore=$('score'), elDelta=$('deltaTag'), elRemain=$('remaining'), elTitle=$('quiz-title');
   const elUserChip=$('userChip'), elUserChip2=$('userChip2');
   const elTimerChip=$('timerChip'), elTimerChip2=$('timerChip2'), elTrial=$('trialBanner');
-  const tabLogin=$('tabLogin'), tabMenu=$('tabMenu'), tabHistory=$('tabHistory');
+  const tabs=$('tabs'), tabMenu=$('tabMenu'), tabHistory=$('tabHistory');
   const historyTable=$('historyTable').querySelector('tbody'), summaryRow=$('summaryRow');
 
   /* Tabs */
   function setTab(active){
-    [tabLogin,tabMenu,tabHistory].forEach(t=>t.classList.remove('active'));
-    ['welcome','menu','history'].forEach(id=>$(id).style.display='none');
-    if(active==='login'){ tabLogin.classList.add('active'); elWelcome.style.display='block'; }
+    ['menu','history'].forEach(id=>$(id).style.display='none');
+    [tabMenu,tabHistory].forEach(t=>t.classList.remove('active'));
     if(active==='menu'){ tabMenu.classList.add('active'); elMenu.style.display='block'; }
     if(active==='history'){ tabHistory.classList.add('active'); elHistory.style.display='block'; }
   }
   tabMenu.onclick = ()=> setTab('menu');
-  tabHistory.onclick = ()=> loadHistory(true); // 点击才切换并加载
+  tabHistory.onclick = ()=> loadHistory(true);
   $('btnBackChapters').onclick = ()=> setTab('menu');
   $('btnRefresh').onclick = ()=> loadHistory(true);
 
@@ -243,6 +234,8 @@
   const readUntil=(k)=>{ const raw=localStorage.getItem(k); return raw?parseInt(raw,10):0; };
   const writeUntil=(k,ts)=>{ if(ts){ localStorage.setItem(k,String(ts)); } else { localStorage.removeItem(k); } };
   const shuffle=(arr)=>{ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; };
+
+  function showTabs(show){ tabs.style.display = show ? 'flex' : 'none'; }
 
   function startTicker(){
     stopTicker();
@@ -261,8 +254,8 @@
   function endSession(){
     writeUntil(LS_SESSION,0); writeUntil(LS_TRIAL,0);
     isTrial=false; stopTicker();
-    elQuiz.style.display='none'; elFinish.style.display='none';
-    setTab('login'); elTrial.style.display='none';
+    elQuiz.style.display='none'; elFinish.style.display='none'; showTabs(false);
+    elWelcome.style.display='block'; elTrial.style.display='none';
   }
   function gateKeep(){
     sessionUntil=readUntil(LS_SESSION);
@@ -279,7 +272,6 @@
   /* 账号 */
   function normalizeKeys(row){ const map={}; Object.keys(row).forEach(k=>{ map[String(k||'').trim().toLowerCase()]=k; }); return map; }
   function getField(row,map,keys){ for(const k of keys){ if(map[k]!=null){ const v=row[map[k]]; if(v!=null && String(v).trim()!=='') return String(v).trim(); } } return ''; }
-
   function loadAccounts(cb){
     if(accounts){ cb(); return; }
     Papa.parse('password.csv',{download:true,header:true,skipEmptyLines:true,complete:(res)=>{
@@ -301,7 +293,6 @@
   $('clearBtn').onclick = ()=>{
     endSession(); $('username').value=''; $('accessCode').value='';
     localStorage.removeItem(LS_NAME);
-    setTab('login');
   };
 
   $('loginForm').addEventListener('submit', function(){
@@ -316,8 +307,7 @@
       writeUntil(LS_SESSION,sessionUntil); writeUntil(LS_TRIAL,sessionUntil);
       localStorage.setItem(LS_NAME,user);
       elUserChip.textContent=`User: ${user}`; elUserChip2.textContent=`User: ${user}`;
-      setTab('menu'); loadChapters(); startTicker(); loadHistory(false);
-      tabMenu.style.display='inline-flex'; tabHistory.style.display='inline-flex';
+      elWelcome.style.display='none'; showTabs(true); detectHistorySource(); setTab('menu'); loadChapters(); startTicker(); loadHistory(false);
       return;
     }
 
@@ -331,8 +321,7 @@
       writeUntil(LS_SESSION,sessionUntil); writeUntil(LS_TRIAL,0);
       localStorage.setItem(LS_NAME,user);
       elUserChip.textContent=`User: ${user}`; elUserChip2.textContent=`User: ${user}`;
-      setTab('menu'); loadChapters(); startTicker(); loadHistory(false);
-      tabMenu.style.display='inline-flex'; tabHistory.style.display='inline-flex';
+      elWelcome.style.display='none'; showTabs(true); detectHistorySource(); setTab('menu'); loadChapters(); startTicker(); loadHistory(false);
     });
   });
 
@@ -368,6 +357,7 @@
   function loadSection(){
     if(now()>=sessionUntil){ endSession(); return; }
     setTab('menu'); elQuiz.style.display='block'; elFinish.style.display='none';
+    showTabs(false); // 进入做题 => 隐藏顶部标签，避免影响作答
     const sec=sectionList[secIndex];
     elTitle.textContent = `${currentChapter} – ${sec[sectionKey]}: ${sec[labelKey]}`;
     score=correct=wrong=0; chapterStart=now();
@@ -492,14 +482,16 @@
     const ctrl=$('controls'); ctrl.innerHTML='';
     const btn=document.createElement('button'); btn.className='btn accent';
     btn.textContent = secIndex < sectionList.length-1 ? 'Next Section' : 'Back to Chapters';
-    btn.onclick=()=>{ elFinish.style.display='none'; if(secIndex < sectionList.length-1){ secIndex++; loadSection(); } else { setTab('menu'); } };
+    btn.onclick=()=>{ elFinish.style.display='none'; if(secIndex < sectionList.length-1){ secIndex++; loadSection(); } else { setTab('menu'); elMenu.style.display='block'; showTabs(true); } };
     ctrl.appendChild(btn);
-    const backBtn=document.createElement('button'); backBtn.className='btn'; backBtn.textContent='Exit'; backBtn.onclick=()=>{ elFinish.style.display='none'; setTab('menu'); }; ctrl.appendChild(backBtn);
+    const backBtn=document.createElement('button'); backBtn.className='btn'; backBtn.textContent='Exit';
+    backBtn.onclick=()=>{ elFinish.style.display='none'; setTab('menu'); elMenu.style.display='block'; showTabs(true); };
+    ctrl.appendChild(backBtn);
 
-    loadHistory(false); // 后台刷新历史，不切页
+    loadHistory(false); // 后台刷新历史
   }
 
-  /* 历史成绩 */
+  /* 历史成绩：自动侦测来源 */
   async function fetchText(url){
     const res = await fetch(url, { cache:'no-store' });
     if(!res.ok) throw new Error('HTTP '+res.status);
@@ -522,18 +514,38 @@
     const m={}; Object.keys(row).forEach(k=>{ m[String(k||'').trim().toLowerCase()] = k; });
     return (keys)=> { for(const key of keys){ if(m[key]!=null) return m[key]; } return null; };
   }
+
+  function detectHistorySource(){
+    // 决定 History 标签是否显示
+    const postUrl = $('postForm').getAttribute('action') || '';
+    const guesses = [];
+    if (HISTORY_PRIMARY_URL) guesses.push(HISTORY_PRIMARY_URL);
+    if (HISTORY_FALLBACK_CSV) guesses.push(HISTORY_FALLBACK_CSV);
+    if (postUrl){
+      guesses.push(postUrl + '?mode=list');
+      guesses.push(postUrl + '?action=list');
+      guesses.push(postUrl + '?list=1');
+    }
+    // 有任何一个候选就先显示标签；拉取失败时再在 loadHistory 里自动隐藏
+    historyAvailable = guesses.length>0;
+    tabHistory.style.display = historyAvailable ? 'inline-flex' : 'none';
+  }
+
   async function loadHistory(show=false){
     if(!user) return;
     if(now()>=sessionUntil){ endSession(); return; }
-    if(show) setTab('history');
+    if(show){ setTab('history'); }
     historyTable.innerHTML = `<tr><td colspan="7" class="muted">Loading...</td></tr>`;
     summaryRow.innerHTML = '';
 
-    const tryUrls=[]; if(HISTORY_PRIMARY_URL) tryUrls.push(HISTORY_PRIMARY_URL); if(HISTORY_FALLBACK_CSV) tryUrls.push(HISTORY_FALLBACK_CSV);
-    if(tryUrls.length===0){
-      historyTable.innerHTML = `<tr><td colspan="7" class="muted">请在代码顶部设置 HISTORY_PRIMARY_URL 或 HISTORY_FALLBACK_CSV。</td></tr>`;
-      return;
-    }
+    // 构建候选 URL 列表
+    const tryUrls=[];
+    if(HISTORY_PRIMARY_URL) tryUrls.push(HISTORY_PRIMARY_URL);
+    if(HISTORY_FALLBACK_CSV) tryUrls.push(HISTORY_FALLBACK_CSV);
+    const postUrl = $('postForm').getAttribute('action') || '';
+    if(postUrl){ tryUrls.push(postUrl+'?mode=list', postUrl+'?action=list', postUrl+'?list=1'); }
+
+    if(tryUrls.length===0){ tabHistory.style.display='none'; return; }
 
     let rows=null, lastErr=null;
     for(const url of tryUrls){
@@ -545,8 +557,12 @@
       }catch(e){ lastErr=e; }
     }
     if(!rows){
-      historyTable.innerHTML = `<tr><td colspan="7" class="muted">无法加载历史成绩：${lastErr?lastErr.message:'未知错误'}</td></tr>`;
+      // 拉取不到就隐藏 History 标签，不提示
+      tabHistory.style.display='none';
+      if(show){ setTab('menu'); }
       return;
+    }else{
+      tabHistory.style.display='inline-flex';
     }
 
     const out=[];
@@ -582,8 +598,10 @@
 
     const limited = out.slice(0, HISTORY_LIMIT);
 
+    if(show) setTab('history'); // 确保显示在历史页
+
     if(!limited.length){
-      historyTable.innerHTML = `<tr><td colspan="7" class="muted">没有你的历史记录。</td></tr>`;
+      historyTable.innerHTML = `<tr><td colspan="7" class="muted">No records yet.</td></tr>`;
     }else{
       historyTable.innerHTML = limited.map(r=>`
         <tr>
