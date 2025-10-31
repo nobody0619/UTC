@@ -187,8 +187,9 @@
   'use strict';
 
 
-const HISTORY_PRIMARY_URL  = '';
-const HISTORY_FALLBACK_CSV = 'https://docs.google.com/spreadsheets/d/1ekSsHOISi1AevA637qfSjCoNb6BiN7e7KlcPYJ6WPQI/export?format=csv&gid=0';
+const HISTORY_PRIMARY_URL  = 'https://docs.google.com/spreadsheets/d/1ekSsHOISi1AevA637qfSjCoNb6BiN7e7KlcPYJ6WPQI/export?format=csv&gid=0';
+const HISTORY_FALLBACK_CSV = '';
+
 
 
 
@@ -482,12 +483,15 @@ const HISTORY_FALLBACK_CSV = 'https://docs.google.com/spreadsheets/d/1ekSsHOISi1
     if(show) setTab('history');
     historyTable.innerHTML=`<tr><td colspan="7" class="muted">Loading...</td></tr>`; summaryRow.innerHTML='';
 
-    const tryUrls=[];
-    if(HISTORY_PRIMARY_URL) tryUrls.push(HISTORY_PRIMARY_URL);
-    if(HISTORY_FALLBACK_CSV) tryUrls.push(HISTORY_FALLBACK_CSV);
-    const postUrl=$('postForm').getAttribute('action')||'';
-    if(postUrl){ tryUrls.push(postUrl+'?mode=list', postUrl+'?action=list', postUrl+'?list=1'); }
-    if(!tryUrls.length){ tabHistory.style.display='none'; if(show) setTab('menu'); return; }
+    const tryUrls = [];
+if (HISTORY_PRIMARY_URL)     tryUrls.push(HISTORY_PRIMARY_URL);
+else if (HISTORY_FALLBACK_CSV) tryUrls.push(HISTORY_FALLBACK_CSV);
+
+if (!tryUrls.length) {
+  tabHistory.style.display = 'none';
+  if (show) setTab('menu');
+  return;
+}
 
     let rows=null;
     for(const url of tryUrls){
