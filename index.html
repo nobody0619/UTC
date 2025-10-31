@@ -9,7 +9,7 @@
   :root{
     --bg:#f6f7fb; --card:#ffffff; --border:#d9dee7; --muted:#64748b; --text:#0f172a;
     --accent:#0ea5e9; --accent-d:#0284c7;
-    --ok:#16a34a; --bad:#ef4444; --chip:#f1f5f9;
+    --ok:#16a34a; --bad:#ef4444; --chip:#f1f5f9; --tag:#0ea5e933;
   }
   *{box-sizing:border-box}
   body{
@@ -20,26 +20,35 @@
       linear-gradient(180deg, #f8fafc, var(--bg) 40%, #eef2f7 100%);
     min-height:100vh; display:flex; align-items:flex-start; justify-content:center; padding:28px 12px;
   }
-  .card{width:100%; max-width:980px; background:var(--card); border:1px solid var(--border); border-radius:16px; padding:18px; box-shadow: 0 10px 30px #0b12200f;}
+  .card{width:100%; max-width:1080px; background:var(--card); border:1px solid var(--border); border-radius:16px; padding:18px; box-shadow:0 10px 30px #0b12200f;}
   h1,h2,h3{margin:0 0 10px}
-  #welcome,#menu,#sections,#quiz,#finish,#history{margin:6px 0}
-  #menu,#sections,#quiz,#finish,#history{display:none}
+
+  #welcome,#menu,#quiz,#finish,#history{margin:6px 0}
+  #menu,#quiz,#finish,#history{display:none}
 
   .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
   .btn{padding:10px 14px; border:1px solid var(--border); border-radius:12px; background:#f8fafc; color:#0b1220; cursor:pointer; transition:.15s; font-weight:600;}
   .btn:hover{transform:translateY(-1px); box-shadow:0 6px 16px #00000010; border-color:#cbd5e1}
   .btn.accent{background:linear-gradient(180deg, var(--accent), var(--accent-d)); color:#fff; border:none}
-  .btn.ghost{background:transparent; border:1px dashed var(--border); color:var(--muted)}
+  .btn.ghost{background:transparent; border:1px dashed var(--border); color:#64748b}
   input[type="text"],input[type="password"]{width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--border); background:#fff; color:#0f172a;}
   input[type="text"]:focus,input[type="password"]:focus{border-color:var(--accent)}
-  #menu button,#sections button{margin:6px 6px 0 0}
-  .meta{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:8px 0}
-  .chip{background:var(--chip); border:1px solid var(--border); color:var(--muted); padding:6px 10px; border-radius:999px; font-size:12px}
 
-  /* 顶部标签（仅 Chapters / History） */
+  /* 顶部标签（Chapters / History） */
   #tabs{display:none; gap:8px; margin:0 0 12px}
   .tab{padding:8px 12px; border:1px solid var(--border); border-radius:999px; cursor:pointer; color:#64748b; background:#fff}
   .tab.active{color:#fff; background:linear-gradient(180deg, var(--accent), var(--accent-d)); border:none}
+
+  /* 章节目录样式 */
+  .meta{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:8px 0}
+  .chip{background:var(--chip); border:1px solid var(--border); color:var(--muted); padding:6px 10px; border-radius:999px; font-size:12px}
+  .chapter-card{border:1px solid var(--border); border-radius:14px; padding:12px; background:#fff; margin:10px 0}
+  .chapter-title{font-weight:800; margin-bottom:6px}
+  .sections-wrap{display:flex; flex-wrap:wrap; gap:8px}
+  .sec-btn{position:relative; padding:8px 12px; border:1px solid var(--border); border-radius:12px; background:#f8fafc; cursor:pointer; font-weight:600}
+  .sec-btn:hover{transform:translateY(-1px); box-shadow:0 6px 16px #00000010}
+  .badge{position:absolute; top:-8px; right:-8px; font-size:11px; padding:3px 6px; border-radius:999px; background:var(--tag); color:#055a7a; border:1px solid #7dd3fc}
+  .last{font-size:11px; color:#0369a1; margin-left:6px}
 
   /* 题卡 & 解释（内联） */
   .question{ text-align:left; margin:16px 0; padding:16px; border:1px solid var(--border); border-radius:14px; background:#fff}
@@ -48,15 +57,15 @@
   .feedback{ font-weight:700; margin:10px 0 6px}
   .feedback.ok{ color:var(--ok)} .feedback.bad{ color:var(--bad)}
   .explain{ margin:8px 0; padding:10px 12px; background:#f8fafc; border:1px solid var(--border); border-radius:10px}
+  img{ max-width:100%; margin:10px 0; border:1px solid var(--border); border-radius:12px}
 
   progress{ width:100%; height:14px; border:none; background:#eef2f7; border-radius:999px; overflow:hidden}
   progress::-webkit-progress-bar{ background:#eef2f7}
   progress::-webkit-progress-value{ background:linear-gradient(90deg, var(--accent), #a78bfa)}
   #score{font-weight:800} #deltaTag{font-weight:900; margin-left:8px}
-  img{ max-width:100%; margin:10px 0; border:1px solid var(--border); border-radius:12px}
 
   #trialBanner{margin-top:8px} .trial{ padding:10px; border-radius:12px; border:1px solid var(--border); background:#fff; color:#0b1220; display:none}
-  .trial strong{ color:var(--accent)} .hint{font-size:12px; color:var(--muted)}
+  .trial strong{ color:var(--accent)} .hint{font-size:12px; color:#64748b}
 
   /* 历史表 */
   table{width:100%; border-collapse:collapse; font-size:14px}
@@ -94,34 +103,25 @@
         <div id="trialBanner" class="trial"></div>
         <div class="row" style="margin-top:10px">
           <button id="startBtn" class="btn accent" type="submit">Start</button>
-          <button id="clearBtn" class="btn ghost" type="button">Clear Saved Session</button>
+          <!-- 清理按钮按你的需求移除 -->
         </div>
       </form>
     </div>
 
-    <!-- 章节列表 -->
+    <!-- 首页：所有 Chapter + Section 一次展开 -->
     <div id="menu">
       <div class="meta">
         <span class="chip" id="userChip">User</span>
         <span class="chip" id="timerChip">00:00</span>
       </div>
-      <h2>Select Chapter</h2>
-      <div id="chapters"></div>
-    </div>
-
-    <!-- Section 列表 -->
-    <div id="sections">
-      <div class="row" style="justify-content:space-between; align-items:center">
-        <h2 id="secTitle" style="margin:0">Select Section</h2>
-        <button id="btnBackChapters" class="btn">← Back to Chapters</button>
-      </div>
-      <div id="sectionButtons" style="margin-top:6px"></div>
+      <h2>Select Section</h2>
+      <div id="directory"></div>
     </div>
 
     <!-- 作答页 -->
     <div id="quiz">
       <div id="backFloat">
-        <button id="btnBackSectionsTop" class="btn">← Back to Sections</button>
+        <button id="btnBackSectionsTop" class="btn">← Back to Chapters</button>
       </div>
       <div class="meta">
         <span class="chip" id="userChip2">User</span>
@@ -186,17 +186,15 @@
 (function(){
   'use strict';
 
-
-const HISTORY_PRIMARY_URL  = 'https://docs.google.com/spreadsheets/d/1ekSsHOISi1AevA637qfSjCoNb6BiN7e7KlcPYJ6WPQI/export?format=csv&gid=0';
-const HISTORY_FALLBACK_CSV = '';
-
-
-
+  /* ====== 历史成绩数据源（锁定 CSV，避免 403） ====== */
+  const HISTORY_PRIMARY_URL  = 'https://docs.google.com/spreadsheets/d/1ekSsHOISi1AevA637qfSjCoNb6BiN7e7KlcPYJ6WPQI/export?format=csv&gid=0';
+  const HISTORY_FALLBACK_CSV = '';
 
   /* 其他配置 */
   const TRIAL_CODE = 'testing';
   const TRIAL_MINUTES = 5;
-  const HISTORY_LIMIT = 50;
+  const HISTORY_LIMIT = 200; // 拉多一点，方便统计每个 section 的历史
+  const MAX_OPTS=15;
 
   const LS_SESSION='pmc_session_until', LS_TRIAL='pmc_trial_until', LS_NAME='pmc_user_name';
 
@@ -204,43 +202,44 @@ const HISTORY_FALLBACK_CSV = '';
   let user='', accounts=null;
   let chapters=[], grouped={};
   let chapterKey, sectionKey, labelKey, sheetKey;
-  let currentChapter='', sectionList=[], secIndex=-1;
+  let currentChapter='', currentRow=null;
   let qs=[], queue=[], score=0, correct=0, wrong=0;
   let chapterStart=0, sessionUntil=0, isTrial=false, timerTick=null;
 
-  let historyCache=[];
-
-  const MAX_OPTS=15;
+  let historyCache=[];                // 全部历史（未筛人）
+  let historyByQuizId=new Map();      // quizId => [{...}, ...]
+  let historyReady=false;
 
   /* DOM */
   const $=(id)=>document.getElementById(id);
   const tabs=$('tabs'), tabMenu=$('tabMenu'), tabHistory=$('tabHistory');
-  const elWelcome=$('welcome'), elMenu=$('menu'), elSections=$('sections'), elQuiz=$('quiz'), elFinish=$('finish'), elHistory=$('history');
-  const elChapters=$('chapters'), elSectionBtns=$('sectionButtons'), elSecTitle=$('secTitle');
+  const elWelcome=$('welcome'), elMenu=$('menu'), elQuiz=$('quiz'), elFinish=$('finish'), elHistory=$('history');
+  const elDir=$('directory');
   const elQuestionA=$('question-area'), elProgress=$('progress');
   const elScore=$('score'), elDelta=$('deltaTag'), elRemain=$('remaining'), elTitle=$('quiz-title');
   const elUserChip=$('userChip'), elUserChip2=$('userChip2');
   const elTimerChip=$('timerChip'), elTimerChip2=$('timerChip2'), elTrial=$('trialBanner');
   const historyTable=$('historyTable').querySelector('tbody'), summaryRow=$('summaryRow');
 
+  /* Tabs 显隐 & 绑定 */
+  function showTabs(show){ tabs.style.display = show?'flex':'none'; }
   function setTab(active){
-    ['menu','sections','history'].forEach(id=>$(id).style.display='none');
+    ['menu','history'].forEach(id=>$(id).style.display='none');
     [tabMenu,tabHistory].forEach(t=>t.classList.remove('active'));
     if(active==='menu'){ tabMenu.classList.add('active'); elMenu.style.display='block'; }
     if(active==='history'){ tabHistory.classList.add('active'); elHistory.style.display='block'; }
   }
-  tabMenu.onclick=()=> setTab('menu');
+  tabMenu.onclick=()=>{ showTabs(true); setTab('menu'); };
   tabHistory.onclick=()=> loadHistory(true);
-  $('btnBackChapters').onclick=()=>{ elSections.style.display='none'; setTab('menu'); };
-  $('btnBackChapters2').onclick=()=> setTab('menu');
-  $('btnBackSectionsTop').onclick=()=>{ elQuiz.style.display='none'; $('backFloat').style.display='none'; elSections.style.display='block'; tabs.style.display='flex'; };
+  $('btnBackChapters2').onclick=()=>{ setTab('menu'); showTabs(true); };
+  $('btnBackSectionsTop').onclick=()=>{ elQuiz.style.display='none'; setTab('menu'); showTabs(true); window.scrollTo({top:0,behavior:'smooth'}); };
 
+  /* 工具 */
   const now=()=>Date.now();
   const fmtTime=(ms)=>{let s=Math.max(0,Math.floor(ms/1000)); const m=Math.floor(s/60); s%=60; return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;};
   const readUntil=(k)=>{const raw=localStorage.getItem(k); return raw?parseInt(raw,10):0;};
   const writeUntil=(k,ts)=>{if(ts){localStorage.setItem(k,String(ts));}else{localStorage.removeItem(k);}};
   const shuffle=(arr)=>{for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];} return arr;};
-  function showTabs(show){ tabs.style.display=show?'flex':'none'; }
 
   function startTicker(){
     stopTicker();
@@ -259,8 +258,8 @@ const HISTORY_FALLBACK_CSV = '';
   function endSession(){
     writeUntil(LS_SESSION,0); writeUntil(LS_TRIAL,0);
     isTrial=false; stopTicker();
-    elQuiz.style.display='none'; elFinish.style.display='none'; elSections.style.display='none'; showTabs(false);
-    $('backFloat').style.display='none';
+    elQuiz.style.display='none'; elFinish.style.display='none';
+    showTabs(false);
     elWelcome.style.display='block'; elTrial.style.display='none';
   }
   (function gate(){
@@ -272,6 +271,7 @@ const HISTORY_FALLBACK_CSV = '';
     } else endSession();
   })();
 
+  /* 账户 */
   function normalizeKeys(row){const m={}; Object.keys(row).forEach(k=>m[String(k||'').trim().toLowerCase()]=k); return m;}
   function field(row,map,keys){for(const k of keys){if(map[k]!=null){const v=row[map[k]]; if(v!=null && String(v).trim()!=='') return String(v).trim();}} return '';}
   function loadAccounts(cb){
@@ -285,18 +285,26 @@ const HISTORY_FALLBACK_CSV = '';
   }
   const findAcc=(nm)=>{const l=nm.toLowerCase(); return (accounts||[]).find(a=>a.name.toLowerCase()===l)||null;};
 
-  $('clearBtn').onclick=()=>{endSession(); $('username').value=''; $('accessCode').value=''; localStorage.removeItem(LS_NAME);};
+  /* 登录 */
   $('loginForm').addEventListener('submit',function(){
     const nm=$('username').value.trim(), pwd=$('accessCode').value.trim();
     if(!nm) return alert('Please enter your name');
     if(!pwd) return alert('Password is required');
 
+    const afterLogin = ()=>{
+      elUserChip.textContent=`User: ${user}`;
+      elUserChip2.textContent=`User: ${user}`;
+      elWelcome.style.display='none';
+      showTabs(true); setTab('menu');
+      loadChapters();             // 构建目录
+      loadHistory(false);         // 抓历史（用于目录徽章）
+      startTicker();
+    };
+
     if(pwd===TRIAL_CODE){
       const ts=now(); user=nm; sessionUntil=ts+TRIAL_MINUTES*60*1000; isTrial=true;
       writeUntil(LS_SESSION,sessionUntil); writeUntil(LS_TRIAL,sessionUntil); localStorage.setItem(LS_NAME,user);
-      $('userChip').textContent=`User: ${user}`; $('userChip2').textContent=`User: ${user}`;
-      elWelcome.style.display='none'; showTabs(true); detectHistorySource(); setTab('menu'); loadChapters(); startTicker(); loadHistory(false);
-      return;
+      afterLogin(); return;
     }
 
     loadAccounts(()=>{
@@ -306,11 +314,11 @@ const HISTORY_FALLBACK_CSV = '';
       if(pwd!==acc.password) return alert('Invalid password');
       const ts=now(); user=acc.name; isTrial=false; sessionUntil=ts+24*60*60*1000;
       writeUntil(LS_SESSION,sessionUntil); writeUntil(LS_TRIAL,0); localStorage.setItem(LS_NAME,user);
-      $('userChip').textContent=`User: ${user}`; $('userChip2').textContent=`User: ${user}`;
-      elWelcome.style.display='none'; showTabs(true); detectHistorySource(); setTab('menu'); loadChapters(); startTicker(); loadHistory(false);
+      afterLogin();
     });
   });
 
+  /* 载入 Chapters，并在首页把所有 Sections 展开 */
   function loadChapters(){
     Papa.parse('Chapters.csv',{download:true,header:true,skipEmptyLines:true,complete:(res)=>{
       chapters = res.data.map(raw=>{ const r={}; Object.entries(raw).forEach(([k,v])=>{ r[k.trim()]= typeof v==='string'? v.trim(): v; }); return r; });
@@ -323,37 +331,68 @@ const HISTORY_FALLBACK_CSV = '';
       if(!chapterKey||!sectionKey||!labelKey||!sheetKey){ alert('Chapters.csv requires: chapter, section, label, sheet'); return; }
 
       grouped={}; chapters.forEach(r=>{ const c=r[chapterKey]; (grouped[c]||(grouped[c]=[])).push(r); });
-
-      $('chapters').innerHTML='';
-      Object.keys(grouped).forEach(chap=>{
-        const btn=document.createElement('button'); btn.className='btn'; btn.textContent=chap; btn.onclick=()=>openSections(chap); $('chapters').appendChild(btn);
-      });
+      // 按 chapter 渲染目录
+      buildDirectory();
+      elMenu.style.display='block';
     }, error:()=>alert('无法读取 Chapters.csv')});
   }
 
-  function openSections(chap){
-    currentChapter = chap;
-    sectionList = grouped[chap].slice().sort((a,b)=> String(a[sectionKey]).localeCompare(String(b[sectionKey]), undefined, {numeric:true}));
-    $('secTitle').textContent = `Select Section — ${chap}`;
-    $('sectionButtons').innerHTML='';
-    sectionList.forEach((row,idx)=>{
-      const b=document.createElement('button'); b.className='btn'; b.textContent=`${row[sectionKey]} : ${row[labelKey]}`;
-      b.onclick=()=> startSection(idx);
-      $('sectionButtons').appendChild(b);
+  function buildDirectory(){
+    // 统计当前用户的历史：quizId => {count,lastScore}
+    const stats = new Map();
+    const nm = (user||'').trim().toLowerCase();
+    (historyCache||[]).forEach(r=>{
+      const rawName = String(r.rawName||'').trim().toLowerCase();
+      if(!rawName || rawName!==nm) return;
+      const qid = String(r.quiz||r.quizId||'').trim();
+      if(!qid) return;
+      const obj = stats.get(qid) || {count:0,lastScore:null};
+      obj.count += 1;
+      if(typeof r.score==='number') obj.lastScore = r.score;
+      stats.set(qid,obj);
     });
-    setTab('menu'); elMenu.style.display='none'; $('sections').style.display='block';
+
+    elDir.innerHTML='';
+    Object.keys(grouped).forEach(chap=>{
+      const card = document.createElement('div'); card.className='chapter-card';
+      const h = document.createElement('div'); h.className='chapter-title'; h.textContent = chap;
+      card.appendChild(h);
+
+      const wrap = document.createElement('div'); wrap.className='sections-wrap';
+      const list = grouped[chap].slice().sort((a,b)=> String(a[sectionKey]).localeCompare(String(b[sectionKey]), undefined, {numeric:true}));
+      list.forEach(row=>{
+        const btn = document.createElement('button'); btn.className='sec-btn';
+        btn.textContent = `${row[sectionKey]} : ${row[labelKey]}`;
+        const qid = `${chap}_${row[sectionKey]}`;
+        const st = stats.get(qid);
+        if(st){
+          const b = document.createElement('span'); b.className='badge'; b.textContent=st.count;
+          btn.appendChild(b);
+          if(st.lastScore!=null){ const ls=document.createElement('span'); ls.className='last'; ls.textContent=`Last ${st.lastScore}`; btn.appendChild(ls); }
+        }
+        btn.onclick = ()=> startByRow(chap,row);
+        wrap.appendChild(btn);
+      });
+
+      card.appendChild(wrap);
+      elDir.appendChild(card);
+    });
   }
 
-  function startSection(idx){
-    secIndex=idx;
-    const sec=sectionList[secIndex];
-    $('sections').style.display='none'; tabs.style.display='none';
+  function startByRow(chap,row){
+    currentChapter = chap;
+    currentRow = row;
+
+    // 进入作答页
+    elMenu.style.display='none';
+    tabs.style.display='none';        // 隐藏 Chapters / History
     $('backFloat').style.display='inline-block';
     elQuiz.style.display='block'; elFinish.style.display='none';
-    $('quiz-title').textContent = `${currentChapter} – ${sec[sectionKey]}: ${sec[labelKey]}`;
+
+    elTitle.textContent = `${currentChapter} – ${row[sectionKey]}: ${row[labelKey]}`;
     score=correct=wrong=0; chapterStart=now();
 
-    Papa.parse(sec[sheetKey],{download:true,header:true,skipEmptyLines:true,complete:(r)=>{
+    Papa.parse(row[sheetKey],{download:true,header:true,skipEmptyLines:true,complete:(r)=>{
       qs = r.data.map(q=>({...q,attempt:0}));
       queue = shuffle([...qs]);
       updateUI(0); nextQ();
@@ -361,12 +400,13 @@ const HISTORY_FALLBACK_CSV = '';
     }, error:()=>alert('无法读取题库 CSV')});
   }
 
+  /* UI / 判分 */
   function updateUI(delta){
-    if(delta===0){ $('deltaTag').textContent=''; $('deltaTag').style.color='inherit'; }
-    else{ $('deltaTag').textContent=(delta>0?`+${delta}`:`${delta}`); $('deltaTag').style.color=delta>0?'var(--ok)':'var(--bad)'; }
-    $('score').childNodes[0].nodeValue = `Score: ${score} `;
-    $('remaining').textContent=`Remaining: ${queue.length}`;
-    $('progress').max=qs.length; $('progress').value=qs.length-queue.length;
+    if(delta===0){ elDelta.textContent=''; elDelta.style.color='inherit'; }
+    else{ elDelta.textContent=(delta>0?`+${delta}`:`${delta}`); elDelta.style.color=delta>0?'var(--ok)':'var(--bad)'; }
+    elScore.childNodes[0].nodeValue = `Score: ${score} `;
+    elRemain.textContent=`Remaining: ${queue.length}`;
+    elProgress.max=qs.length; elProgress.value=qs.length-queue.length;
   }
   function getExplain(q){
     const keys=['explain','explanation','note','notes'];
@@ -377,7 +417,7 @@ const HISTORY_FALLBACK_CSV = '';
 
   function nextQ(){
     if(now()>=sessionUntil){ endSession(); return; }
-    $('question-area').innerHTML=''; updateUI(0);
+    elQuestionA.innerHTML=''; updateUI(0);
     if(queue.length===0){ return finishSection(); }
 
     const q = queue.shift();
@@ -448,77 +488,74 @@ const HISTORY_FALLBACK_CSV = '';
       wrap.appendChild(nb);
     };
     wrap.appendChild(sb);
-    $('question-area').appendChild(wrap);
+    elQuestionA.appendChild(wrap);
   }
 
   function finishSection(){
     elQuiz.style.display='none'; $('backFloat').style.display='none'; elFinish.style.display='block';
     $('finish-msg').textContent=`Well done, ${user}!`;
     $('stats').textContent=`Score: ${score}, Correct: ${correct}, Wrong: ${wrong}`;
-    const sec=sectionList[secIndex];
-    const f=$('postForm'); f.quizId.value=`${currentChapter}_${sec[sectionKey]}`; f.name.value=user; f.score.value=score; f.correct.value=correct; f.wrong.value=wrong; f.time.value=Math.floor((now()-chapterStart)/1000); f.submit();
 
+    // 提交成绩
+    const sec=currentRow;
+    const f=$('postForm');
+    f.quizId.value=`${currentChapter}_${sec[sectionKey]}`;
+    f.name.value=user; f.score.value=score; f.correct.value=correct; f.wrong.value=wrong; f.time.value=Math.floor((now()-chapterStart)/1000);
+    f.submit();
+
+    // 按钮
     const ctrl=$('controls'); ctrl.innerHTML='';
-    const backSec=document.createElement('button'); backSec.className='btn accent'; backSec.textContent='Back to Sections';
-    backSec.onclick=()=>{ elFinish.style.display='none'; $('sections').style.display='block'; tabs.style.display='flex'; };
-    ctrl.appendChild(backSec);
-
-    const backCh=document.createElement('button'); backCh.className='btn'; backCh.textContent='Back to Chapters';
-    backCh.onclick=()=>{ elFinish.style.display='none'; setTab('menu'); };
+    const backCh=document.createElement('button'); backCh.className='btn accent'; backCh.textContent='Back to Chapters';
+    backCh.onclick=()=>{
+      elFinish.style.display='none';
+      setTab('menu'); showTabs(true);
+      elMenu.style.display='block';
+      // 刷新历史 + 目录徽章
+      loadHistory(false).then(()=> buildDirectory());
+      window.scrollTo({top:0,behavior:'smooth'});
+    };
     ctrl.appendChild(backCh);
 
-    loadHistory(false); // 后台刷新历史
+    const toHistory=document.createElement('button'); toHistory.className='btn'; toHistory.textContent='View History';
+    toHistory.onclick=()=>{ elFinish.style.display='none'; showTabs(true); loadHistory(true); };
+    ctrl.appendChild(toHistory);
   }
 
-  document.getElementById('btnRefresh').onclick=()=> loadHistory(true);
-
-  function detectHistorySource(){
-    const postUrl=$('postForm').getAttribute('action')||'';
-    const hasAny = !!(HISTORY_PRIMARY_URL || HISTORY_FALLBACK_CSV || postUrl);
-    tabHistory.style.display = hasAny ? 'inline-flex' : 'none';
-  }
+  /* ===== 历史成绩（CSV 读取 + 放宽匹配） ===== */
+  $('btnRefresh').onclick=()=> loadHistory(true);
 
   async function loadHistory(show=false){
-    if(!user) return;
-    if(show) setTab('history');
+    if(!user){ return; }
+    if(show){ setTab('history'); }
     historyTable.innerHTML=`<tr><td colspan="7" class="muted">Loading...</td></tr>`; summaryRow.innerHTML='';
 
-    const tryUrls = [];
-if (HISTORY_PRIMARY_URL)     tryUrls.push(HISTORY_PRIMARY_URL);
-else if (HISTORY_FALLBACK_CSV) tryUrls.push(HISTORY_FALLBACK_CSV);
-
-if (!tryUrls.length) {
-  tabHistory.style.display = 'none';
-  if (show) setTab('menu');
-  return;
-}
+    const tryUrls=[];
+    if(HISTORY_PRIMARY_URL) tryUrls.push(HISTORY_PRIMARY_URL);
+    else if(HISTORY_FALLBACK_CSV) tryUrls.push(HISTORY_FALLBACK_CSV);
+    if(!tryUrls.length){ tabHistory.style.display='none'; if(show) setTab('menu'); return; }
 
     let rows=null;
     for(const url of tryUrls){
       try{
-        const txt = await fetch(url, {cache:'no-store'}).then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.text(); });
-        try{
-          const j = JSON.parse(txt);
-          if (Array.isArray(j)) { rows = j; break; }
-          if (j && Array.isArray(j.data)) { rows = j.data; break; }
-        }catch(_){}
+        const txt = await fetch(url,{cache:'no-store'}).then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.text(); });
         rows = await new Promise(res=>Papa.parse(txt,{header:true,skipEmptyLines:true,complete:r=>res(r.data)}));
         break;
       }catch(_){}
     }
     if(!rows){ tabHistory.style.display='none'; if(show) setTab('menu'); return; }
 
+    // 映射列
     const normKey = k => String(k||'').trim().toLowerCase();
     const picker = row => {
       const m={}; Object.keys(row).forEach(k=> m[normKey(k)] = k );
       const pick = (...cands)=> { for(const c of cands){ if(m[c]!=null) return m[c]; } return null; };
       return {
         nameKey: pick('name','user','account','student','nama','participant'),
-        quizKey: pick('quizid','quiz','chapter','title','paper','section'),
+        quizKey: pick('quizid','quiz'),
         scoreKey: pick('score','mark','marks'),
         cKey: pick('correct','right'),
         wKey: pick('wrong','incorrect'),
-        tKey: pick('duration','seconds','time','timesec'),
+        tKey: pick('time','duration','seconds','timesec'),
         tsKey: pick('timestamp','date','datetime','time')
       };
     };
@@ -527,27 +564,36 @@ if (!tryUrls.length) {
       const p = picker(r);
       return {
         rawName: p.nameKey ? String(r[p.nameKey]||'') : '',
-        date: p.tsKey ? String(r[p.tsKey]||'') : '',
-        quiz: p.quizKey ? String(r[p.quizKey]||'') : '',
-        score: p.scoreKey!=null ? Number(r[p.scoreKey]||0) : null,
+        quiz:    p.quizKey ? String(r[p.quizKey]||'') : '',
+        score:   p.scoreKey!=null ? Number(r[p.scoreKey]||0) : null,
         correct: p.cKey!=null ? Number(r[p.cKey]||0) : null,
-        wrong: p.wKey!=null ? Number(r[p.wKey]||0) : null,
-        duration: p.tKey!=null ? Number(r[p.tKey]||0) : null
+        wrong:   p.wKey!=null ? Number(r[p.wKey]||0) : null,
+        duration:p.tKey!=null ? Number(r[p.tKey]||0) : null,
+        date:    p.tsKey ? String(r[p.tsKey]||'') : ''
       };
     });
 
+    // 生成 quizId -> rows 映射，供目录徽章用
+    historyByQuizId = new Map();
+    historyCache.forEach(r=>{
+      const arr = historyByQuizId.get(r.quiz) || [];
+      arr.push(r); historyByQuizId.set(r.quiz, arr);
+    });
+    historyReady = true;
+
+    // 渲染 History 页
     renderHistory(user);
+
+    // 如果在首页，刷新目录徽章
+    if(!show){ buildDirectory(); }
   }
 
   function renderHistory(nameFilter){
     const tbody = historyTable;
     const norm = s => String(s||'').trim().toLowerCase();
-
     const all = historyCache.filter(r => r.rawName && r.rawName.trim()!=='');
     let out = all.filter(r => norm(r.rawName) === norm(nameFilter));
-    if(out.length===0 && nameFilter){
-      out = all.filter(r => norm(r.rawName).includes(norm(nameFilter)));
-    }
+    if(out.length===0 && nameFilter){ out = all.filter(r => norm(r.rawName).includes(norm(nameFilter))); }
     if(out.length===0){ out = all.slice(); }
 
     out.sort((a,b)=>{
@@ -560,34 +606,33 @@ if (!tryUrls.length) {
     if(!limited.length){
       tbody.innerHTML = `<tr><td colspan="7" class="muted">No records yet.</td></tr>`;
       summaryRow.innerHTML='';
-      return;
+    }else{
+      tbody.innerHTML = limited.map(r=>`
+        <tr>
+          <td>${r.date||'<span class="muted">—</span>'}</td>
+          <td>${(r.rawName||'').trim()||'<span class="muted">—</span>'}</td>
+          <td>${r.quiz||'<span class="muted">—</span>'}</td>
+          <td class="num">${r.score!=null?r.score:'—'}</td>
+          <td class="num">${r.correct!=null?r.correct:'—'}</td>
+          <td class="num">${r.wrong!=null?r.wrong:'—'}</td>
+          <td class="num">${r.duration!=null?r.duration:'—'}</td>
+        </tr>
+      `).join('');
+
+      const n=limited.length;
+      const scores = limited.map(x=>x.score).filter(Number.isFinite);
+      const times  = limited.map(x=>x.duration).filter(Number.isFinite);
+      const avg = scores.length ? (scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(2) : '—';
+      const max = scores.length ? Math.max(...scores) : '—';
+      const last = limited[0];
+      summaryRow.innerHTML = `
+        <span class="chip">Records: ${n}</span>
+        <span class="chip">Avg Score: ${avg}</span>
+        <span class="chip">Best: ${max}</span>
+        <span class="chip">Last: ${last.score!=null?last.score:'—'}${last.quiz?(' • '+last.quiz):''}</span>
+        <span class="chip">Avg Time(s): ${times.length?(Math.round(times.reduce((a,b)=>a+b,0)/times.length)):'—'}</span>
+      `;
     }
-
-    tbody.innerHTML = limited.map(r=>`
-      <tr>
-        <td>${r.date||'<span class="muted">—</span>'}</td>
-        <td>${(r.rawName||'').trim()||'<span class="muted">—</span>'}</td>
-        <td>${r.quiz||'<span class="muted">—</span>'}</td>
-        <td class="num">${r.score!=null?r.score:'—'}</td>
-        <td class="num">${r.correct!=null?r.correct:'—'}</td>
-        <td class="num">${r.wrong!=null?r.wrong:'—'}</td>
-        <td class="num">${r.duration!=null?r.duration:'—'}</td>
-      </tr>
-    `).join('');
-
-    const n=limited.length;
-    const scores = limited.map(x=>x.score).filter(Number.isFinite);
-    const times  = limited.map(x=>x.duration).filter(Number.isFinite);
-    const avg = scores.length ? (scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(2) : '—';
-    const max = scores.length ? Math.max(...scores) : '—';
-    const last = limited[0];
-    summaryRow.innerHTML = `
-      <span class="chip">Records: ${n}</span>
-      <span class="chip">Avg Score: ${avg}</span>
-      <span class="chip">Best: ${max}</span>
-      <span class="chip">Last: ${last.score!=null?last.score:'—'}${last.quiz?(' • '+last.quiz):''}</span>
-      <span class="chip">Avg Time(s): ${times.length?(Math.round(times.reduce((a,b)=>a+b,0)/times.length)):'—'}</span>
-    `;
 
     const inp = document.getElementById('historyFilter');
     if (inp && !inp._bound){
@@ -596,8 +641,6 @@ if (!tryUrls.length) {
       if (!inp.value) inp.value = nameFilter || '';
     }
   }
-
-  detectHistorySource();
 
 })();
 </script>
