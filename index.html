@@ -20,7 +20,7 @@
       linear-gradient(180deg, #f8fafc, var(--bg) 40%, #eef2f7 100%);
     min-height:100vh; display:flex; align-items:flex-start; justify-content:center; padding:28px 12px;
   }
-  .card{width:100%; max-width:1080px; background:var(--card); border:1px solid var(--border); border-radius:16px; padding:18px; box-shadow:0 10px 30px #0b12200f;}
+  .card{width:100%; max-width:1080px; background:var(--card); border:1px solid var(--border); border-radius:16px; padding:18px; box-shadow:0 10px 30px #0b12200f; position:relative}
   h1,h2,h3{margin:0 0 10px}
 
   #welcome,#menu,#quiz,#finish,#history{margin:6px 0}
@@ -34,14 +34,14 @@
   input[type="text"],input[type="password"]{width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--border); background:#fff; color:#0f172a;}
   input[type="text"]:focus,input[type="password"]:focus{border-color:var(--accent)}
 
-  /* 顶部标签（Chapters / History） */
+  /* Tabs */
   #tabs{display:none; gap:8px; margin:0 0 12px}
   .tab{padding:8px 12px; border:1px solid var(--border); border-radius:999px; cursor:pointer; color:#64748b; background:#fff}
   .tab.active{color:#fff; background:linear-gradient(180deg, var(--accent), var(--accent-d)); border:none}
 
-  /* 章节目录样式 */
+  /* Directory */
   .meta{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:8px 0}
-  .chip{background:var(--chip); border:1px solid var(--border); color:var(--muted); padding:6px 10px; border-radius:999px; font-size:12px}
+  .chip{background:var(--chip); border:1px solid var(--border); color:#64748b; padding:6px 10px; border-radius:999px; font-size:12px}
   .chapter-card{border:1px solid var(--border); border-radius:14px; padding:12px; background:#fff; margin:10px 0}
   .chapter-title{font-weight:800; margin-bottom:6px}
   .sections-wrap{display:flex; flex-wrap:wrap; gap:8px}
@@ -50,7 +50,7 @@
   .badge{position:absolute; top:-8px; right:-8px; font-size:11px; padding:3px 6px; border-radius:999px; background:var(--tag); color:#055a7a; border:1px solid #7dd3fc}
   .last{font-size:11px; color:#0369a1; margin-left:6px}
 
-  /* 题卡 & 解释（内联） */
+  /* Question & explanation */
   .question{ text-align:left; margin:16px 0; padding:16px; border:1px solid var(--border); border-radius:14px; background:#fff}
   .option-label{ display:block; margin:8px 0; cursor:pointer; line-height:1.45}
   .option-label input{ transform:scale(1.15); margin-right:10px; vertical-align:middle}
@@ -64,32 +64,46 @@
   progress::-webkit-progress-value{ background:linear-gradient(90deg, var(--accent), #a78bfa)}
   #score{font-weight:800} #deltaTag{font-weight:900; margin-left:8px}
 
+  /* Trial notice */
   #trialBanner{margin-top:8px} .trial{ padding:10px; border-radius:12px; border:1px solid var(--border); background:#fff; color:#0b1220; display:none}
   .trial strong{ color:var(--accent)} .hint{font-size:12px; color:#64748b}
 
-  /* 历史表 */
+  /* History table */
   table{width:100%; border-collapse:collapse; font-size:14px}
   th,td{border-bottom:1px solid var(--border); padding:8px 6px; text-align:left}
   th{color:#334155; background:#f8fafc}
-  .num{text-align:right} .muted{color:var(--muted)}
+  .num{text-align:right} .muted{color:#64748b}
 
-  /* 作答页固定返回按钮 */
+  /* Sticky back */
   #backFloat{position:sticky; top:0; z-index:20; display:none; margin:-6px 0 8px; padding:8px 12px; background:#ffffffcc; backdrop-filter:saturate(180%) blur(6px); border:1px solid var(--border); border-radius:10px;}
+
+  /* WhatsApp strip */
+  .wa-strip{margin-top:16px; display:flex; justify-content:center}
+  .wa-btn{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:12px 16px; border:none; border-radius:999px;
+    background:#22c55e; color:#fff; font-weight:800; cursor:pointer;
+    box-shadow:0 6px 16px #22c55e44;
+  }
+  .wa-btn:hover{transform:translateY(-1px)}
 </style>
 </head>
 <body>
   <div class="card">
-    <!-- 顶部标签（登录后显示；作答时隐藏） -->
+    <!-- Tabs -->
     <div id="tabs">
       <div id="tabMenu" class="tab active">Chapters</div>
       <div id="tabHistory" class="tab">History</div>
     </div>
 
-    <!-- 登录 -->
+    <!-- Sign in -->
     <div id="welcome">
       <h2>Sign in</h2>
-      <p class="hint">每个账号都有自己的密码；或使用 <code>testing</code> 开启 5 分钟试用。</p>
-      <form id="loginForm" autocomplete="on" onsubmit="return false;">
+      <p class="hint" style="margin-top:4px;">Each account has its own password. Or use <code>testing</code> for a 5-minute trial.</p>
+      <div class="trial" id="introBox" style="display:block">
+        <strong>Better to do than to read.</strong> When you get it wrong, we give you <strong>two extra chances</strong> — so you learn by fixing your mistakes.
+      </div>
+      <form id="loginForm" autocomplete="on" onsubmit="return false;" style="margin-top:10px">
         <div class="row" style="gap:12px;">
           <div style="flex:1 1 280px">
             <label class="hint">Name</label>
@@ -103,22 +117,27 @@
         <div id="trialBanner" class="trial"></div>
         <div class="row" style="margin-top:10px">
           <button id="startBtn" class="btn accent" type="submit">Start</button>
-          <!-- 清理按钮按你的需求移除 -->
         </div>
       </form>
     </div>
 
-    <!-- 首页：所有 Chapter + Section 一次展开 -->
+    <!-- Home: Chapters + Sections -->
     <div id="menu">
       <div class="meta">
         <span class="chip" id="userChip">User</span>
         <span class="chip" id="timerChip">00:00</span>
       </div>
-      <h2>Select Section</h2>
+      <h2>Select a section to begin</h2>
       <div id="directory"></div>
+      <div class="wa-strip">
+        <a class="wa-btn" id="waBtn" target="_blank" rel="noopener">
+          <!-- simple unicode icon -->
+          <span>💬</span> <span>Unlock unlimited-time account via WhatsApp</span>
+        </a>
+      </div>
     </div>
 
-    <!-- 作答页 -->
+    <!-- Quiz -->
     <div id="quiz">
       <div id="backFloat">
         <button id="btnBackSectionsTop" class="btn">← Back to Chapters</button>
@@ -136,14 +155,14 @@
       <div id="question-area"></div>
     </div>
 
-    <!-- 完成 -->
+    <!-- Finish -->
     <div id="finish">
       <h3 id="finish-msg"></h3>
       <p id="stats"></p>
       <div id="controls" class="row"></div>
     </div>
 
-    <!-- 历史成绩（右侧带过滤框） -->
+    <!-- History -->
     <div id="history">
       <div class="row" style="justify-content:space-between;">
         <h3 style="margin:0">History</h3>
@@ -173,7 +192,7 @@
     </div>
   </div>
 
-  <!-- 提交到 GAS -->
+  <!-- GAS submit -->
   <iframe name="postFrame" style="display:none;"></iframe>
   <form id="postForm"
         action="https://script.google.com/macros/s/AKfycbyek_JoRdNny8wiHO_nOyiNJV2Gt2qoVjiJ3rhFZu0BkbWYflpVXYiE-_Gl7xHQROM/exec"
@@ -186,19 +205,19 @@
 (function(){
   'use strict';
 
-  /* ====== 历史成绩数据源（锁定 CSV，避免 403） ====== */
+  /* History data source (CSV) */
   const HISTORY_PRIMARY_URL  = 'https://docs.google.com/spreadsheets/d/1ekSsHOISi1AevA637qfSjCoNb6BiN7e7KlcPYJ6WPQI/export?format=csv&gid=0';
   const HISTORY_FALLBACK_CSV = '';
 
-  /* 其他配置 */
+  /* Config */
   const TRIAL_CODE = 'testing';
   const TRIAL_MINUTES = 5;
-  const HISTORY_LIMIT = 200; // 拉多一点，方便统计每个 section 的历史
+  const HISTORY_LIMIT = 200;
   const MAX_OPTS=15;
 
   const LS_SESSION='pmc_session_until', LS_TRIAL='pmc_trial_until', LS_NAME='pmc_user_name';
 
-  /* 状态 */
+  /* State */
   let user='', accounts=null;
   let chapters=[], grouped={};
   let chapterKey, sectionKey, labelKey, sheetKey;
@@ -206,9 +225,8 @@
   let qs=[], queue=[], score=0, correct=0, wrong=0;
   let chapterStart=0, sessionUntil=0, isTrial=false, timerTick=null;
 
-  let historyCache=[];                // 全部历史（未筛人）
-  let historyByQuizId=new Map();      // quizId => [{...}, ...]
-  let historyReady=false;
+  let historyCache=[];
+  let historyByQuizId=new Map();
 
   /* DOM */
   const $=(id)=>document.getElementById(id);
@@ -221,7 +239,7 @@
   const elTimerChip=$('timerChip'), elTimerChip2=$('timerChip2'), elTrial=$('trialBanner');
   const historyTable=$('historyTable').querySelector('tbody'), summaryRow=$('summaryRow');
 
-  /* Tabs 显隐 & 绑定 */
+  /* Tabs */
   function showTabs(show){ tabs.style.display = show?'flex':'none'; }
   function setTab(active){
     ['menu','history'].forEach(id=>$(id).style.display='none');
@@ -234,7 +252,7 @@
   $('btnBackChapters2').onclick=()=>{ setTab('menu'); showTabs(true); };
   $('btnBackSectionsTop').onclick=()=>{ elQuiz.style.display='none'; setTab('menu'); showTabs(true); window.scrollTo({top:0,behavior:'smooth'}); };
 
-  /* 工具 */
+  /* Tools */
   const now=()=>Date.now();
   const fmtTime=(ms)=>{let s=Math.max(0,Math.floor(ms/1000)); const m=Math.floor(s/60); s%=60; return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;};
   const readUntil=(k)=>{const raw=localStorage.getItem(k); return raw?parseInt(raw,10):0;};
@@ -250,7 +268,7 @@
       if(isTrial){
         const left=sessionUntil-now();
         if(left<=0){ alert('Trial expired. Returning to sign in.'); endSession(); }
-        else{ elTrial.style.display='block'; elTrial.innerHTML=`试用模式：剩余 <strong>${fmtTime(left)}</strong>`; }
+        else{ elTrial.style.display='block'; elTrial.innerHTML=`Trial mode: <strong>${fmtTime(left)}</strong> left`; }
       }
     },500);
   }
@@ -271,7 +289,7 @@
     } else endSession();
   })();
 
-  /* 账户 */
+  /* Accounts */
   function normalizeKeys(row){const m={}; Object.keys(row).forEach(k=>m[String(k||'').trim().toLowerCase()]=k); return m;}
   function field(row,map,keys){for(const k of keys){if(map[k]!=null){const v=row[map[k]]; if(v!=null && String(v).trim()!=='') return String(v).trim();}} return '';}
   function loadAccounts(cb){
@@ -279,25 +297,37 @@
     Papa.parse('password.csv',{download:true,header:true,skipEmptyLines:true,complete:(res)=>{
       accounts = res.data.map(r=>{const m=normalizeKeys(r); return {name:field(r,m,['name','account','user']), password:field(r,m,['password','pass']), active:field(r,m,['active'])||'1'};})
         .filter(x=>x.name && x.password);
-      if(!accounts.length) alert('password.csv 为空或缺少 name/password 列');
+      if(!accounts.length) alert('password.csv is empty or missing name/password columns.');
       cb();
-    }, error:()=>alert('找不到 password.csv 或无法读取')});
+    }, error:()=>alert('Cannot read password.csv')});
   }
   const findAcc=(nm)=>{const l=nm.toLowerCase(); return (accounts||[]).find(a=>a.name.toLowerCase()===l)||null;};
 
-  /* 登录 */
+  /* WhatsApp button */
+  (function setupWA(){
+    const link = "https://wa.me/60164471300?text=" + encodeURIComponent(
+      "Hi, I’d like to unlock an unlimited-time account for PMC Quiz.\n" +
+      "My name: ______\nPreferred package: Monthly / Semester / Annual\n" +
+      "Notes: (class/school)"
+    );
+    const a = document.getElementById('waBtn');
+    a.href = link;
+    a.title = "WhatsApp 016-447 1300 to unlock unlimited-time account";
+  })();
+
+  /* Login */
   $('loginForm').addEventListener('submit',function(){
     const nm=$('username').value.trim(), pwd=$('accessCode').value.trim();
-    if(!nm) return alert('Please enter your name');
-    if(!pwd) return alert('Password is required');
+    if(!nm) return alert('Please enter your name.');
+    if(!pwd) return alert('Password is required.');
 
     const afterLogin = ()=>{
       elUserChip.textContent=`User: ${user}`;
       elUserChip2.textContent=`User: ${user}`;
       elWelcome.style.display='none';
       showTabs(true); setTab('menu');
-      loadChapters();             // 构建目录
-      loadHistory(false);         // 抓历史（用于目录徽章）
+      loadChapters();
+      loadHistory(false);
       startTicker();
     };
 
@@ -309,36 +339,35 @@
 
     loadAccounts(()=>{
       const acc=findAcc(nm);
-      if(!acc) return alert('Account not found');
-      if(String(acc.active).trim()==='0') return alert('This account is disabled');
-      if(pwd!==acc.password) return alert('Invalid password');
+      if(!acc) return alert('Account not found.');
+      if(String(acc.active).trim()==='0') return alert('This account is disabled.');
+      if(pwd!==acc.password) return alert('Invalid password.');
       const ts=now(); user=acc.name; isTrial=false; sessionUntil=ts+24*60*60*1000;
       writeUntil(LS_SESSION,sessionUntil); writeUntil(LS_TRIAL,0); localStorage.setItem(LS_NAME,user);
       afterLogin();
     });
   });
 
-  /* 载入 Chapters，并在首页把所有 Sections 展开 */
+  /* Chapters -> expanded directory */
   function loadChapters(){
     Papa.parse('Chapters.csv',{download:true,header:true,skipEmptyLines:true,complete:(res)=>{
       chapters = res.data.map(raw=>{ const r={}; Object.entries(raw).forEach(([k,v])=>{ r[k.trim()]= typeof v==='string'? v.trim(): v; }); return r; });
-      if(!chapters.length){ alert('Check Chapters.csv file'); return; }
+      if(!chapters.length){ alert('Chapters.csv is empty.'); return; }
       const keys=Object.keys(chapters[0]);
       chapterKey = keys.find(k=>k.toLowerCase()==='chapter');
       sectionKey = keys.find(k=>k.toLowerCase()==='section');
       labelKey   = keys.find(k=>k.toLowerCase()==='label');
       sheetKey   = keys.find(k=>k.toLowerCase()==='sheet');
-      if(!chapterKey||!sectionKey||!labelKey||!sheetKey){ alert('Chapters.csv requires: chapter, section, label, sheet'); return; }
+      if(!chapterKey||!sectionKey||!labelKey||!sheetKey){ alert('Chapters.csv requires columns: chapter, section, label, sheet'); return; }
 
       grouped={}; chapters.forEach(r=>{ const c=r[chapterKey]; (grouped[c]||(grouped[c]=[])).push(r); });
-      // 按 chapter 渲染目录
       buildDirectory();
       elMenu.style.display='block';
-    }, error:()=>alert('无法读取 Chapters.csv')});
+    }, error:()=>alert('Cannot read Chapters.csv')});
   }
 
   function buildDirectory(){
-    // 统计当前用户的历史：quizId => {count,lastScore}
+    // stats for current user
     const stats = new Map();
     const nm = (user||'').trim().toLowerCase();
     (historyCache||[]).forEach(r=>{
@@ -383,9 +412,8 @@
     currentChapter = chap;
     currentRow = row;
 
-    // 进入作答页
     elMenu.style.display='none';
-    tabs.style.display='none';        // 隐藏 Chapters / History
+    tabs.style.display='none';
     $('backFloat').style.display='inline-block';
     elQuiz.style.display='block'; elFinish.style.display='none';
 
@@ -397,10 +425,10 @@
       queue = shuffle([...qs]);
       updateUI(0); nextQ();
       window.scrollTo({top:0,behavior:'smooth'});
-    }, error:()=>alert('无法读取题库 CSV')});
+    }, error:()=>alert('Cannot read question CSV')});
   }
 
-  /* UI / 判分 */
+  /* Scoring */
   function updateUI(delta){
     if(delta===0){ elDelta.textContent=''; elDelta.style.color='inherit'; }
     else{ elDelta.textContent=(delta>0?`+${delta}`:`${delta}`); elDelta.style.color=delta>0?'var(--ok)':'var(--bad)'; }
@@ -449,7 +477,7 @@
       let ua=[];
       if(q.type==='text'){ ua=$('txtAns').value.split(',').map(s=>s.trim()).filter(Boolean); }
       else{ ua=Array.from(wrap.querySelectorAll('input[name="opt"]:checked')).map(i=>i.value); }
-      if(!ua.length) return alert('Please select or enter an answer');
+      if(!ua.length) return alert('Please select or enter an answer.');
 
       let isC=false;
       if(q.type==='text'){
@@ -476,6 +504,7 @@
       fb.textContent = isC?`Correct! +${delta}`:`Wrong! ${delta}${ansTxt?`  Answer: ${ansTxt}`:''}`;
       updateUI(delta);
 
+      // two extra chances (re-queue twice) if wrong
       if(!isC){ q.attempt++; for(let i=0;i<2;i++){ queue.splice(Math.floor(Math.random()*(queue.length+1)),0,{...q}); } }
 
       const exp=getExplain(q);
@@ -493,24 +522,21 @@
 
   function finishSection(){
     elQuiz.style.display='none'; $('backFloat').style.display='none'; elFinish.style.display='block';
-    $('finish-msg').textContent=`Well done, ${user}!`;
+    $('finish-msg').textContent=`Good job, ${user}!`;
     $('stats').textContent=`Score: ${score}, Correct: ${correct}, Wrong: ${wrong}`;
 
-    // 提交成绩
     const sec=currentRow;
     const f=$('postForm');
     f.quizId.value=`${currentChapter}_${sec[sectionKey]}`;
     f.name.value=user; f.score.value=score; f.correct.value=correct; f.wrong.value=wrong; f.time.value=Math.floor((now()-chapterStart)/1000);
     f.submit();
 
-    // 按钮
     const ctrl=$('controls'); ctrl.innerHTML='';
     const backCh=document.createElement('button'); backCh.className='btn accent'; backCh.textContent='Back to Chapters';
     backCh.onclick=()=>{
       elFinish.style.display='none';
       setTab('menu'); showTabs(true);
       elMenu.style.display='block';
-      // 刷新历史 + 目录徽章
       loadHistory(false).then(()=> buildDirectory());
       window.scrollTo({top:0,behavior:'smooth'});
     };
@@ -521,7 +547,7 @@
     ctrl.appendChild(toHistory);
   }
 
-  /* ===== 历史成绩（CSV 读取 + 放宽匹配） ===== */
+  /* History (CSV) */
   $('btnRefresh').onclick=()=> loadHistory(true);
 
   async function loadHistory(show=false){
@@ -544,7 +570,6 @@
     }
     if(!rows){ tabHistory.style.display='none'; if(show) setTab('menu'); return; }
 
-    // 映射列
     const normKey = k => String(k||'').trim().toLowerCase();
     const picker = row => {
       const m={}; Object.keys(row).forEach(k=> m[normKey(k)] = k );
@@ -573,18 +598,14 @@
       };
     });
 
-    // 生成 quizId -> rows 映射，供目录徽章用
+    // build map for directory badges
     historyByQuizId = new Map();
     historyCache.forEach(r=>{
       const arr = historyByQuizId.get(r.quiz) || [];
       arr.push(r); historyByQuizId.set(r.quiz, arr);
     });
-    historyReady = true;
 
-    // 渲染 History 页
     renderHistory(user);
-
-    // 如果在首页，刷新目录徽章
     if(!show){ buildDirectory(); }
   }
 
