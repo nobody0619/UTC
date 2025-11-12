@@ -107,30 +107,49 @@
     </div>
 
 <div id="welcome">
+  <!-- Modern Hero block (move above Sign in) -->
+  <div class="hero" id="loginHero" style="
+    text-align:center;
+    background:linear-gradient(180deg,#f0f9ff,#ffffff);
+    border:1px solid #dbeafe;
+    border-radius:18px;
+    padding:28px 18px;
+    margin-bottom:22px;
+  ">
+    <div style="display:flex;justify-content:center;align-items:center;gap:12px;margin-bottom:10px;">
+      <div style="
+        width:54px;height:54px;border-radius:16px;
+        background:#0f172a;color:#fff;font-weight:900;
+        display:flex;align-items:center;justify-content:center;
+        font-size:20px;box-shadow:0 4px 10px #0001;">
+        PMC
+      </div>
+      <h2 style="margin:0;font-size:26px;font-weight:800;color:#0f172a;">
+        FIMM Exam Practice / <span style="color:#0284c7">PMC Quiz</span>
+      </h2>
+    </div>
+    <p style="margin:0 0 12px;color:#334155;font-size:15px;">
+      Master by doing • Two extra chances • Auto score upload • Instant explanations
+    </p>
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px;">
+      <span class="chip" style="border-color:#22c55e;color:#15803d;background:#dcfce7;">FIMM Module 1–6</span>
+      <span class="chip" style="border-color:#38bdf8;color:#0369a1;background:#e0f2fe;">Practice by Chapter</span>
+      <span class="chip" style="border-color:#a78bfa;color:#6b21a8;background:#f3e8ff;">Repeat Wrong Twice</span>
+      <span class="chip" style="border-color:#f59e0b;color:#92400e;background:#fef3c7;">Leaderboard Ready</span>
+    </div>
+  </div>
+
+  <!-- Sign in form starts here -->
   <h2>Sign in</h2>
   <p class="hint" style="margin-top:4px;">
     Each account has its own password. Or use <code>testing</code> for a 5-minute trial.
   </p>
 
-  <!-- HERO moved to the top -->
-  <div class="hero" id="loginHero" style="margin-top:12px;">
-    <h3>FIMM Exam Practice — <em>The Magic Drills</em></h3>
-    <p>Master by doing. Instant feedback, explanations on every attempt, and targeted retries for what you miss.</p>
-    <div class="bullets">
-      <span class="chip">Inline Explanations</span>
-      <span class="chip">Two Extra Chances</span>
-      <span class="chip">Personal Score History</span>
-      <span class="chip">Per-Account Access</span>
-    </div>
-  </div>
-
-  <!-- Slogan box -->
   <div class="trial" id="introBox" style="display:block; margin-top:12px;">
     <strong>Better to do than to read.</strong> When you get it wrong, we give you
     <strong>two extra chances</strong> — so you learn by fixing your mistakes.
   </div>
 
-  <!-- Login form -->
   <form id="loginForm" autocomplete="on" onsubmit="return false;" style="margin-top:10px">
     <div class="row" style="gap:12px;">
       <div style="flex:1 1 280px">
