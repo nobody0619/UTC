@@ -106,47 +106,55 @@
       <div id="tabHistory" class="tab">History</div>
     </div>
 
-    <!-- Sign in -->
-    <div id="welcome">
-      <h2>Sign in</h2>
-      <p class="hint" style="margin-top:4px;">Each account has its own password. Or use <code>testing</code> for a 5-minute trial.</p>
-      <div class="trial" id="introBox" style="display:block">
-        <strong>Better to do than to read.</strong> When you get it wrong, we give you <strong>two extra chances</strong> — so you learn by fixing your mistakes.
-      </div>
-      <form id="loginForm" autocomplete="on" onsubmit="return false;" style="margin-top:10px">
-        <div class="row" style="gap:12px;">
-          <div style="flex:1 1 280px">
-            <label class="hint">Name</label>
-            <input type="text" id="username" placeholder="Your name" autocomplete="username"/>
-          </div>
-          <div style="flex:1 1 280px">
-            <label class="hint">Password</label>
-            <input type="password" id="accessCode" placeholder="Account password" autocomplete="current-password"/>
-          </div>
-        </div>
-        <div id="trialBanner" class="trial"></div>
-        <div class="row" style="margin-top:10px">
-          <button id="startBtn" class="btn accent" type="submit">Start</button>
-        </div>
-      </form>
+<div id="welcome">
+  <h2>Sign in</h2>
+  <p class="hint" style="margin-top:4px;">
+    Each account has its own password. Or use <code>testing</code> for a 5-minute trial.
+  </p>
 
-      <!-- FIMM intro on login page -->
-      <div class="hero" style="margin-top:18px;">
-        <h3>FIMM Exam Practice — <em>The Magic Drills</em></h3>
-        <p>Master by doing. Instant feedback, explanations on every attempt, and targeted retries for what you miss.</p>
-        <div class="bullets">
-          <span class="chip">Inline Explanations</span>
-          <span class="chip">Two Extra Chances</span>
-          <span class="chip">Personal Score History</span>
-          <span class="chip">Per-Account Access</span>
-        </div>
-      </div>
+  <!-- HERO moved to the top -->
+  <div class="hero" id="loginHero" style="margin-top:12px;">
+    <h3>FIMM Exam Practice — <em>The Magic Drills</em></h3>
+    <p>Master by doing. Instant feedback, explanations on every attempt, and targeted retries for what you miss.</p>
+    <div class="bullets">
+      <span class="chip">Inline Explanations</span>
+      <span class="chip">Two Extra Chances</span>
+      <span class="chip">Personal Score History</span>
+      <span class="chip">Per-Account Access</span>
+    </div>
+  </div>
 
-      <!-- WhatsApp on sign-in page -->
-      <div class="wa-strip">
-        <a class="wa-btn" id="waBtnTop" target="_blank" rel="noopener">💬 Unlock unlimited-time account via WhatsApp</a>
+  <!-- Slogan box -->
+  <div class="trial" id="introBox" style="display:block; margin-top:12px;">
+    <strong>Better to do than to read.</strong> When you get it wrong, we give you
+    <strong>two extra chances</strong> — so you learn by fixing your mistakes.
+  </div>
+
+  <!-- Login form -->
+  <form id="loginForm" autocomplete="on" onsubmit="return false;" style="margin-top:10px">
+    <div class="row" style="gap:12px;">
+      <div style="flex:1 1 280px">
+        <label class="hint">Name</label>
+        <input type="text" id="username" placeholder="Your name" autocomplete="username"/>
+      </div>
+      <div style="flex:1 1 280px">
+        <label class="hint">Password</label>
+        <input type="password" id="accessCode" placeholder="Account password" autocomplete="current-password"/>
       </div>
     </div>
+    <div id="trialBanner" class="trial"></div>
+    <div class="row" style="margin-top:10px">
+      <button id="startBtn" class="btn accent" type="submit">Start</button>
+    </div>
+  </form>
+
+  <!-- WhatsApp button -->
+  <div class="wa-strip">
+    <a class="wa-btn" id="waBtnTop" target="_blank" rel="noopener">
+      💬 Unlock unlimited-time account via WhatsApp
+    </a>
+  </div>
+</div>
 
     <!-- Home: Chapters + Sections -->
     <div id="menu">
