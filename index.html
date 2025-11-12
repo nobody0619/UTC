@@ -50,7 +50,7 @@
   .badge{position:absolute; top:-8px; right:-8px; font-size:11px; padding:3px 6px; border-radius:999px; background:var(--tag); color:#055a7a; border:1px solid #7dd3fc}
   .last{font-size:11px; color:#0369a1; margin-left:6px}
 
-  /* Hero on home */
+  /* Hero */
   .hero{margin-top:6px; padding:14px; border:1px dashed var(--border); border-radius:14px; background:#fbfdff}
   .hero h3{margin:0 0 6px}
   .hero p{margin:0 0 6px; color:#334155}
@@ -93,6 +93,9 @@
     box-shadow:0 6px 16px #22c55e44; text-decoration:none;
   }
   .wa-btn:hover{transform:translateY(-1px)}
+
+  /* Hide timers by default (only show in trial via JS) */
+  #timerChip, #timerChip2 { display:none; }
 </style>
 </head>
 <body>
@@ -126,6 +129,19 @@
           <button id="startBtn" class="btn accent" type="submit">Start</button>
         </div>
       </form>
+
+      <!-- FIMM intro on login page -->
+      <div class="hero" style="margin-top:18px;">
+        <h3>FIMM Exam Practice — <em>The Magic Drills</em></h3>
+        <p>Master by doing. Instant feedback, explanations on every attempt, and targeted retries for what you miss.</p>
+        <div class="bullets">
+          <span class="chip">Inline Explanations</span>
+          <span class="chip">Two Extra Chances</span>
+          <span class="chip">Personal Score History</span>
+          <span class="chip">Per-Account Access</span>
+        </div>
+      </div>
+
       <!-- WhatsApp on sign-in page -->
       <div class="wa-strip">
         <a class="wa-btn" id="waBtnTop" target="_blank" rel="noopener">💬 Unlock unlimited-time account via WhatsApp</a>
@@ -139,7 +155,7 @@
         <span class="chip" id="timerChip">00:00</span>
       </div>
 
-      <!-- Hero block -->
+      <!-- Hero block on home -->
       <div class="hero">
         <h3>FIMM Exam Practice — <em>The Magic Drills</em></h3>
         <p>Master by doing. Instant feedback, explanations on every attempt, and targeted retries for what you miss.</p>
@@ -282,23 +298,36 @@
   const writeUntil=(k,ts)=>{if(ts){localStorage.setItem(k,String(ts));}else{localStorage.removeItem(k);}};
   const shuffle=(arr)=>{for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];} return arr;};
 
+  function setTimerVisibility(){
+    // show timers only in trial mode
+    const show = isTrial;
+    elTimerChip.style.display = show ? 'inline-flex' : 'none';
+    elTimerChip2.style.display = show ? 'inline-flex' : 'none';
+  }
+
   function startTicker(){
     stopTicker();
+    setTimerVisibility();
     timerTick=setInterval(()=>{
       const elapsed=now()-chapterStart;
-      elTimerChip.textContent=fmtTime(elapsed);
-      elTimerChip2.textContent=fmtTime(elapsed);
       if(isTrial){
         const left=sessionUntil-now();
-        if(left<=0){ alert('Trial expired. Returning to sign in.'); endSession(); }
-        else{ elTrial.style.display='block'; elTrial.innerHTML=`Trial mode: <strong>${fmtTime(left)}</strong> left`; }
+        if(left<=0){ alert('Trial expired. Returning to sign in.'); endSession(); return; }
+        elTrial.style.display='block';
+        elTrial.innerHTML=`Trial mode: <strong>${fmtTime(left)}</strong> left`;
+        elTimerChip.textContent=fmtTime(left);
+        elTimerChip2.textContent=fmtTime(left);
+      }else{
+        // hide timers if not trial (safety)
+        setTimerVisibility();
+        elTrial.style.display='none';
       }
     },500);
   }
   function stopTicker(){ if(timerTick){clearInterval(timerTick); timerTick=null;} }
   function endSession(){
     writeUntil(LS_SESSION,0); writeUntil(LS_TRIAL,0);
-    isTrial=false; stopTicker();
+    isTrial=false; stopTicker(); setTimerVisibility();
     elQuiz.style.display='none'; elFinish.style.display='none';
     showTabs(false);
     elWelcome.style.display='block'; elTrial.style.display='none';
@@ -308,6 +337,7 @@
     if(sessionUntil>now()){
       isTrial=(readUntil(LS_TRIAL)===sessionUntil);
       const savedName=localStorage.getItem(LS_NAME)||''; if(savedName) $('username').value=savedName;
+      setTimerVisibility();
       elTrial.style.display=isTrial?'block':'none';
     } else endSession();
   })();
@@ -326,24 +356,18 @@
   }
   const findAcc=(nm)=>{const l=nm.toLowerCase(); return (accounts||[]).find(a=>a.name.toLowerCase()===l)||null;};
 
- /* WhatsApp buttons */
-(function setupWA(){
-  const prefill =
-    "Hi, I’d like to unlock an unlimited-time account for PMC Quiz (FIMM)\n" +
-    "My Name:\n" +
-    "Password:";
-  const link = "https://wa.me/60164471300?text=" + encodeURIComponent(prefill);
-
-  const a1 = document.getElementById('waBtn');
-  const a2 = document.getElementById('waBtnTop');
-  [a1,a2].forEach(a=>{
-    if(a){
-      a.href = link;
-      a.title = "WhatsApp 016-447 1300 to unlock unlimited-time account";
-    }
-  });
-})();
-
+  /* WhatsApp buttons */
+  (function setupWA(){
+    const prefill =
+      "Hi, I’d like to unlock an unlimited-time account for PMC Quiz (FIMM)\n" +
+      "My Name:\n" +
+      "Password:";
+    const link = "https://wa.me/60164471300?text=" + encodeURIComponent(prefill);
+    ['waBtn','waBtnTop'].forEach(id=>{
+      const a = document.getElementById(id);
+      if(a){ a.href = link; a.title = "WhatsApp 016-447 1300 to unlock unlimited-time account"; }
+    });
+  })();
 
   /* Login */
   $('loginForm').addEventListener('submit',function(){
@@ -352,8 +376,8 @@
     if(!pwd) return alert('Password is required.');
 
     const afterLogin = ()=>{
-      document.getElementById('userChip').textContent=`User: ${user}`;
-      document.getElementById('userChip2').textContent=`User: ${user}`;
+      elUserChip.textContent=`User: ${user}`;
+      elUserChip2.textContent=`User: ${user}`;
       elWelcome.style.display='none';
       showTabs(true); setTab('menu');
       loadChapters();
@@ -444,7 +468,7 @@
 
     elMenu.style.display='none';
     tabs.style.display='none';
-    document.getElementById('backFloat').style.display='inline-block';
+    $('backFloat').style.display='inline-block';
     elQuiz.style.display='block'; elFinish.style.display='none';
 
     elTitle.textContent = `${currentChapter} – ${row[sectionKey]}: ${row[labelKey]}`;
@@ -551,9 +575,9 @@
   }
 
   function finishSection(){
-    elQuiz.style.display='none'; document.getElementById('backFloat').style.display='none'; elFinish.style.display='block';
-    document.getElementById('finish-msg').textContent=`Good job, ${user}!`;
-    document.getElementById('stats').textContent=`Score: ${score}, Correct: ${correct}, Wrong: ${wrong}`;
+    elQuiz.style.display='none'; $('backFloat').style.display='none'; elFinish.style.display='block';
+    $('finish-msg').textContent=`Good job, ${user}!`;
+    $('stats').textContent=`Score: ${score}, Correct: ${correct}, Wrong: ${wrong}`;
 
     const sec=currentRow;
     const f=$('postForm');
@@ -561,7 +585,7 @@
     f.name.value=user; f.score.value=score; f.correct.value=correct; f.wrong.value=wrong; f.time.value=Math.floor((now()-chapterStart)/1000);
     f.submit();
 
-    const ctrl=document.getElementById('controls'); ctrl.innerHTML='';
+    const ctrl=$('controls'); ctrl.innerHTML='';
     const backCh=document.createElement('button'); backCh.className='btn accent'; backCh.textContent='Back to Chapters';
     backCh.onclick=()=>{
       elFinish.style.display='none';
@@ -578,7 +602,7 @@
   }
 
   /* History (CSV) */
-  document.getElementById('btnRefresh').onclick=()=> loadHistory(true);
+  $('btnRefresh').onclick=()=> loadHistory(true);
 
   async function loadHistory(show=false){
     if(!user){ return; }
